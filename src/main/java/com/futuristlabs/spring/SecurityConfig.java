@@ -51,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // common
                 .regexMatchers(GET, "/status").permitAll()
+                .regexMatchers(GET, "/v1.0/pages/.*").permitAll()
                 .and()
 
                 // swagger
