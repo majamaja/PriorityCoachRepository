@@ -51,8 +51,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // common
                 .regexMatchers(GET, "/status").permitAll()
-
                 .and()
+
+                // swagger
+                .authorizeRequests()
+                .antMatchers("/v2/api-docs", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
+                .and()
+
                 .authorizeRequests().anyRequest().authenticated();
     }
 
