@@ -43,6 +43,7 @@ dependencies {
 	compile('io.springfox:springfox-swagger2:2.7.0')
 	compile('io.springfox:springfox-swagger-ui:2.7.0')
 	compileOnly('org.projectlombok:lombok')
+	compile("org.apache.commons:commons-dbcp2:2.1.1")
 	runtime('org.postgresql:postgresql')
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
