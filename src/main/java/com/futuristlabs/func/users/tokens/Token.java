@@ -1,7 +1,6 @@
 package com.futuristlabs.func.users.tokens;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
