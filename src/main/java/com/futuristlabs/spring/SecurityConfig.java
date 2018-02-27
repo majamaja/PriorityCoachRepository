@@ -41,10 +41,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(new CORSFilter(), SessionManagementFilter.class)
                 .formLogin().disable()
                 .csrf().disable()
-                .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint)
-                .and()
-                .authorizeRequests()
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+                .and().authorizeRequests()
 
                 // CORS
                 .regexMatchers(OPTIONS, ".*").permitAll()
@@ -52,14 +50,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // common
                 .regexMatchers(GET, "/status").permitAll()
                 .regexMatchers(GET, "/v1.0/pages/.*").permitAll()
-                .and()
+
+                // user registration
+                .regexMatchers(POST, "/v1.0/users").permitAll()
+
+                // login
+                .regexMatchers(POST, "/v1.0/sessions").permitAll()
+                .regexMatchers(POST, "/v1.0/users/forgotten-password").permitAll()
+                .regexMatchers(POST, "/admin/sessions").permitAll()
+                .regexMatchers(POST, "/admin/admin-users/forgotten-password").permitAll()
+
+                // default
+                .regexMatchers("/v1.0/.*").hasAuthority("USER")
+                .regexMatchers("/admin/.*").hasAuthority("ADMIN")
 
                 // swagger
-                .authorizeRequests()
-                .antMatchers("/v2/api-docs", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
-                .and()
-
-                .authorizeRequests().anyRequest().authenticated();
+                .antMatchers("/v2/api-docs", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll();
     }
 
     @Autowired
