@@ -1,43 +1,42 @@
 package com.futuristlabs.rest.v1_0;
 
-import com.futuristlabs.func.resources.CreateResourceResponse;
 import com.futuristlabs.func.resources.ResourceData;
-import com.futuristlabs.func.resources.ResourceDataRepository;
-import io.swagger.annotations.ApiParam;
+import com.futuristlabs.func.resources.ResourceDataService;
+import com.futuristlabs.utils.rest.LastModifiedHeader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/v1.0/resources")
 public class ResourcesEndpoint {
-    private final ResourceDataRepository resourceDataRepository;
+    private final ResourceDataService resources;
 
     @Autowired
-    public ResourcesEndpoint(ResourceDataRepository resourceDataRepository) {
-        this.resourceDataRepository = resourceDataRepository;
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
-    public CreateResourceResponse createResource(@RequestHeader(value = "Content-Type") String contentType,
-                                                 @ApiParam(name = "body", value = "Resource content")
-                                                 @RequestBody final byte[] content) {
-        ResourceData newResource = new ResourceData();
-        newResource.setMimeType(contentType);
-        newResource.setContent(content);
-
-        final UUID resourceId = resourceDataRepository.create(newResource);
-        return new CreateResourceResponse(resourceId);
+    public ResourcesEndpoint(ResourceDataService resources) {
+        this.resources = resources;
     }
 
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
-    public byte[] getResource(@PathVariable(name = "resourceId") final UUID resourceId,
-                              final HttpServletResponse httpServletResponse) {
+    public ResponseEntity<byte[]> downloadResource(@RequestHeader(value = "If-Modified-Since", required = false)
+                                                   @DateTimeFormat(pattern = "EEE, dd MMM yyyy HH:mm:ss zzz") final LocalDateTime lastModifiedSince,
+                                                   @PathVariable(name = "resourceId") final UUID resourceId,
+                                                   HttpServletResponse response) {
 
-        ResourceData resourceData = resourceDataRepository.getById(resourceId);
-        httpServletResponse.setHeader("Content-Type", resourceData.getMimeType());
-        return resourceData.getContent();
+        final ResourceData resourceData = new LastModifiedHeader<>(ResourceData::getCreatedAt)
+                .checkSetAndReturn(response, resources.readById(resourceId), lastModifiedSince);
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf(resourceData.getMimeType()));
+
+        return new ResponseEntity<>(resourceData.getContent(), headers, HttpStatus.OK);
     }
 }

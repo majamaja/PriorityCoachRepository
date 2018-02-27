@@ -10,7 +10,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ResourceData {
 	private UUID id;
+	private LocalDateTime createdAt;
 	private String mimeType;
-	private LocalDateTime createdOn;
 	private byte[] content;
 }
