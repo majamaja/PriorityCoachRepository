@@ -22,6 +22,17 @@ public class CryptoUtils {
 		return new String(encode(digestedData));
 	}
 
+	public static String md5(CharSequence string) {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException exception) {
+            throw new IllegalArgumentException("Unable to encode password. Reason: " + exception.getMessage(), exception);
+        }
+        byte[] digestedData = digest.digest(encode(string));
+        return new String(encode(digestedData));
+    }
+
 	/**
 	 * Get the bytes of the String in UTF-8 encoded form.
 	 */
