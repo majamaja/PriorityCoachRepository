@@ -1,7 +1,13 @@
 package com.futuristlabs.func.pages;
 
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 public interface StaticPagesRepository {
-	StaticPage getPageByName(String pageName, LocalDateTime lastModifiedSince);
+	List<StaticPage> findAll();
+	StaticPage findById(UUID pageId);
+	StaticPage findByName(String pageName);
+	UUID insert(StaticPage page);
+	void update(StaticPage page);
+	void deleteById(UUID pageId);
 }
