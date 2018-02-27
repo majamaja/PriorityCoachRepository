@@ -11,11 +11,11 @@ import java.io.StringWriter;
 import java.util.Map;
 
 @Component
-public class VelocityTemplates {
+public class VelocityTemplate {
 
     private final VelocityEngine ve;
 
-    public VelocityTemplates() {
+    public VelocityTemplate() {
         ve = new VelocityEngine();
         ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
