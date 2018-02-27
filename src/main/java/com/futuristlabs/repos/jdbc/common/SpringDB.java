@@ -1,26 +1,21 @@
 package com.futuristlabs.repos.jdbc.common;
 
-
 import com.futuristlabs.utils.Pair;
-import com.futuristlabs.utils.repository.Page;
-import com.futuristlabs.utils.repository.PageData;
-import com.futuristlabs.utils.repository.Sort;
+import com.futuristlabs.utils.repository.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -41,7 +36,7 @@ public class SpringDB {
 
     // SELECT
     private <T> RowMapper<T> beanMapper(Class<T> beanClass) {
-        return new BeanPropertyRowMapper<>(beanClass);
+        return new CustomBeanPropertyRowMapper<>(beanClass);
     }
 
     private  <T, U> U checked(final RowMapper<T> mapper, final String sql, final Parameters params, Function<T, U> resultConverter) {
@@ -88,7 +83,7 @@ public class SpringDB {
     }
 
     public <T> T row(final RowMapper<T> mapper, final String sql, final Parameters params) {
-        return template.queryForObject(sql, params.asMap(), mapper);
+        return template.queryForObject(sql, params, mapper);
     }
 
     public <T> T row(final RowMapper<T> mapper, final String sql, Parameter<?> ... params) {
@@ -104,7 +99,7 @@ public class SpringDB {
     }
 
     public <T> List<T> list(final RowMapper<T> mapper, final String sql, final Parameters params) {
-        return template.query(sql, params.asMap(), mapper);
+        return template.query(sql, params, mapper);
     }
 
     public <T> List<T> list(final RowMapper<T> mapper, final String sql, Parameter<?> ... params) {
@@ -142,62 +137,48 @@ public class SpringDB {
     }
 
     // paginated
-    public <T> PageData<T> getPage(Class<T> beanClass, final String sql, final Page page, final Sort<T> sort, final Parameters params) {
-        final String countSql = String.format("SELECT count(*) FROM (%s)", sql);
+    public <T> PageData<T> getPage(Class<T> beanClass, final String sql, final Page page, final SortBy<T> sortBy, final SortOrder sortOrder, final Parameters params) {
+        final String countSql = String.format("SELECT count(*) FROM (%s) AS count", sql);
         final long itemsCount = row((rs, rowNum) -> rs.getLong(1), countSql, params);
 
-        final String sortBy = sort.getConfig().getKey(sort.getSortBy()).stream()
-                .map(s -> s + " " + sort.getSortOrder()).collect(Collectors.joining(", "));
-        final String itemsSql = String.format("%s ORDER BY %s OFFSET :offset LIMIT :limit", sql, sortBy);
+        final String orderBy = sortBy.getColumns().stream().map(s -> s + " " + sortOrder).collect(Collectors.joining(", "));
+        final String itemsSql = String.format("%s ORDER BY %s OFFSET :offset LIMIT :limit", sql, orderBy);
 
         params.set("offset", page.getPageOffset()).set("limit", page.getPageSize());
         final List<T> items = list(beanClass, itemsSql, params);
 
-        return new PageData<>(items, itemsCount, page, sort);
-
+        return new PageData<>(items, itemsCount, page, sortBy, sortOrder);
     }
 
-    public <T> PageData<T> getPage(Class<T> beanClass, final String sql, final Page page, final Sort<T> sort, Parameter<?> ... params) {
-        return getPage(beanClass, sql, page, sort, Parameters.fromList(params));
+    public <T> PageData<T> getPage(Class<T> beanClass, final String sql, final Page page, final SortBy<T> sortBy, final SortOrder sortOrder, Parameter<?> ... params) {
+        return getPage(beanClass, sql, page, sortBy, sortOrder, Parameters.fromList(params));
     }
 
     // INSERT
-    private InsertResult insert(String sql, SqlParameterSource source) {
-        final KeyHolder keyHolder = new GeneratedKeyHolder();
-        template.update(sql, source, keyHolder);
-        return new InsertResult(keyHolder);
-    }
-
     public InsertResult insert(String sql, Parameters params) {
-        return insert(sql, new MapSqlParameterSource(params.asMap()));
+        final KeyHolder keyHolder = new GeneratedKeyHolder();
+        final int updatedRowsCount = template.update(sql, params, keyHolder);
+        return new InsertResult(keyHolder, updatedRowsCount);
     }
 
     public InsertResult insert(String sql, Parameter<?> ... params) {
         return insert(sql, Parameters.fromList(params));
     }
 
-    public <T> InsertResult insert(String sql, T bean) {
-        if (bean instanceof Parameter) {
-            // XXX: ugly hack, but JAVA method resolution order is apparently broken.
-            return insert(sql, Parameters.fromList((Parameter<?>)bean));
-        }
-        return insert(sql, new BeanPropertySqlParameterSource(bean));
+    public <T> InsertResult insert(String sql, T bean, Parameter<?> ... params) {
+        return insert(sql, new Parameters(bean).setAll(params));
     }
 
     // UPDATE (@TODO: add UpdateResult class?)
     public int update(final String sql, final Parameters params) {
-        return template.update(sql, params.asMap());
+        return template.update(sql, params);
     }
 
     public int update(String sql, Parameter<?> ... params) {
         return update(sql, Parameters.fromList(params));
     }
 
-    public <T> int update(String sql, T bean) {
-        if (bean instanceof Parameter) {
-            // XXX: ugly hack, but JAVA method resolution order is apparently broken.
-            return update(sql, Parameters.fromList((Parameter<?>)bean));
-        }
-        return template.update(sql, new BeanPropertySqlParameterSource(bean));
+    public <T> int update(String sql, T bean, Parameter<?> ... params) {
+        return update(sql, new Parameters(bean).setAll(params));
     }
 }

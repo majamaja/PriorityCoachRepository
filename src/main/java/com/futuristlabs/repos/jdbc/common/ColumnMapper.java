@@ -17,7 +17,8 @@ import java.util.function.Supplier;
 @AllArgsConstructor
 public class ColumnMapper<T> implements RowMapper<T> {
     private final String columnName;
-    private final @Getter(AccessLevel.NONE) RowMapper<T> baseMapper;
+    @Getter(AccessLevel.NONE)
+    private final RowMapper<T> baseMapper;
 
     public RowMapper<T> safe() {
         return new CheckedMapper<>(this, Function.identity());

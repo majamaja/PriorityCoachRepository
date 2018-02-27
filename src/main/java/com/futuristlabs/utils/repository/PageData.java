@@ -10,26 +10,26 @@ public class PageData<T> {
     private final Long totalItems;
     private final Integer pageNumber;
     private final Integer pageSize;
-    private final String sortBy;
+    private final SortBy<T> sortBy;
     private final SortOrder sortOrder;
 
-    public PageData(List<T> items, Long totalItems, Page page, Sort<? super T> sort) {
-        assert page == null || items.size() <= page.getPageSize();
+    public PageData(List<T> items, Long totalItems, Page page, SortBy<T> sortBy, SortOrder sortOrder) {
+        assert page == null || page.getPageSize() == null || items.size() <= page.getPageSize();
         assert page == null || page.getPageOffset() + items.size() <= totalItems;
 
         this.items = items;
         this.totalItems = totalItems;
         this.pageNumber = page != null ? page.getPageNumber() : null;
         this.pageSize = page != null ? page.getPageSize() : null;
-        this.sortBy = sort != null ? sort.getSortBy() : null;
-        this.sortOrder = sort != null ? sort.getSortOrder() : null;
+        this.sortBy = sortBy;
+        this.sortOrder = sortOrder;
     }
 
     public PageData(final List<T> items) {
-        this(items, null, null, null);
+        this(items, null, null, null, null);
     }
 
     public PageData(List<T> items, Long totalItems, Page page) {
-        this(items, totalItems, page, null);
+        this(items, totalItems, page, null, null);
     }
 }

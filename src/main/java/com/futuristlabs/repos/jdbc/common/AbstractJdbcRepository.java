@@ -52,4 +52,8 @@ public abstract class AbstractJdbcRepository {
     protected static ColumnMapper<LocalDateTime> getDateTime(final String name) {
         return new ColumnMapper<>(name, (rs, rowNum) -> rs.getTimestamp(name).toLocalDateTime());
     }
+
+    protected static <T> RowMapper<T> getBean(final Class<T> clazz) {
+        return new CustomBeanPropertyRowMapper<>(clazz);
+    }
 }

@@ -47,7 +47,7 @@ dependencies {
 	compile("com.notnoop.apns:apns:1.0.0.Beta6")
 	compileOnly('org.projectlombok:lombok')
 	compile("org.apache.commons:commons-dbcp2:2.1.1")
-	runtime('org.postgresql:postgresql')
+	compile('org.postgresql:postgresql:42.2.1')
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
