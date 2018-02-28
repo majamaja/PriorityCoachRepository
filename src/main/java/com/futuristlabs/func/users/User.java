@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 
 @Data
 @NoArgsConstructor
@@ -44,6 +45,6 @@ public class User {
     @Email
     private String email;
 
-    @JsonIgnore
+    @JsonProperty(access = WRITE_ONLY)
     private String password;
 }
