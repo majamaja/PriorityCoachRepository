@@ -1,7 +1,8 @@
-package com.futuristlabs.spring;
+package com.futuristlabs.spring.repos;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -12,9 +13,12 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
+import static java.sql.Connection.TRANSACTION_REPEATABLE_READ;
+
 @Configuration
+@ComponentScan({"com.futuristlabs.repos.jdbc"})
 @EnableTransactionManagement(proxyTargetClass = true)
-public class JdbcTestConfig {
+public class RepositoryTestConfig {
     private static final String JDBC_DATABASE_URL = "JDBC_DATABASE_URL";
     private static final String HEROKU_DATABASE_URL = "jdbc:postgresql://ec2-54-235-150-134.compute-1.amazonaws.com:5432/d3eq15mr8bfpj2?user=zmrbkuocinmqrx&password=2b5cc4bb69807f86fe83476b715d5457ead48e10162209e68ae17dab9d80dfcb&sslmode=require";
     private static final String JDBC_URL = HEROKU_DATABASE_URL;
@@ -30,6 +34,7 @@ public class JdbcTestConfig {
 
         final BasicDataSource dataSource = new BasicDataSource();
         dataSource.setUrl(databaseUrl);
+        dataSource.setDefaultTransactionIsolation(TRANSACTION_REPEATABLE_READ);
         this.dataSource = dataSource;
     }
 
@@ -51,5 +56,10 @@ public class JdbcTestConfig {
     @Bean
     public NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
         return new NamedParameterJdbcTemplate(getDataSource());
+    }
+
+    @Bean
+    public SampleData getSampleData() {
+        return new SampleData();
     }
 }
