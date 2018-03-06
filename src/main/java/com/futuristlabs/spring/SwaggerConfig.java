@@ -22,32 +22,32 @@ public class SwaggerConfig {
 	public Docket mobile() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.ignoredParameterTypes(AuthenticationPrincipal.class)
-				.groupName("codehospitality-mobile-api")
+				.groupName("futuristlabs-mobile-api")
 				.directModelSubstitute(LocalDateTime.class, Date.class)
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.codehospitality.rest.v1_0"))
+				.apis(RequestHandlerSelectors.basePackage("com.futuristlabs.rest.v1_0"))
 				.paths(PathSelectors.any())
 				.build()
 				//according to bug https://github.com/springfox/springfox/issues/1569 ApiKey name should match reference in SecurityReference
 				.securitySchemes(Collections.singletonList(new ApiKey("X-Auth-Token", "xAuthToken", "header")))
 				.securityContexts(Collections.singletonList(generateXAuthTokenSecurityContext()))
-				.apiInfo(new ApiInfo("Code Hospitality MOBILE API definitions", "Code Hospitality MOBILE API definitions", "1.0", null, (Contact) null, null, null, Collections.emptyList()));
+				.apiInfo(new ApiInfo("Futurist Labs MOBILE API definitions", "Futurist Labs MOBILE API definitions", "1.0", null, (Contact) null, null, null, Collections.emptyList()));
 	}
 
 	@Bean
 	public Docket admin() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.ignoredParameterTypes(AuthenticationPrincipal.class)
-				.groupName("codehospitality-admin-api")
+				.groupName("futuristlabs-admin-api")
 				.directModelSubstitute(LocalDateTime.class, Date.class)
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.codehospitality.rest.admin"))
+				.apis(RequestHandlerSelectors.basePackage("com.futuristlabs.rest.admin"))
 				.paths(PathSelectors.any())
 				.build()
 				//according to bug https://github.com/springfox/springfox/issues/1569 ApiKey name should match reference in SecurityReference
 				.securitySchemes(Collections.singletonList(new ApiKey("X-Auth-Token", "xAuthToken", "header")))
 				.securityContexts(Collections.singletonList(generateXAuthTokenSecurityContext()))
-				.apiInfo(new ApiInfo("Code Hospitality ADMIN API definitions", "Code Hospitality ADMIN API definitions", "1.0", null, (Contact) null, null, null, Collections.emptyList()));
+				.apiInfo(new ApiInfo("Futurist Labs ADMIN API definitions", "Futurist Labs ADMIN API definitions", "1.0", null, (Contact) null, null, null, Collections.emptyList()));
 	}
 
 	private SecurityContext generateXAuthTokenSecurityContext() {

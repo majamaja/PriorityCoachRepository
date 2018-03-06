@@ -8,4 +8,7 @@ public enum SystemProperty {
     SMTP_FROM,
     SMTP_FROM_ALIAS,
     SMTP_USE_SSL,
+
+    APPLE_USE_APP_STORE_PRODUCTION_URL,
+    APPLE_APP_STORE_PASSWORD,
 }
