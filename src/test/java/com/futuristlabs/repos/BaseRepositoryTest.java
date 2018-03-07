@@ -1,4 +1,4 @@
-package com.futuristlabs.spring.repos;
+package com.futuristlabs.repos;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

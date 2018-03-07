@@ -1,24 +1,12 @@
-package com.futuristlabs.spring.repos;
+package com.futuristlabs.repos;
 
 
 import com.futuristlabs.func.pages.StaticPage;
 import com.futuristlabs.repos.jdbc.common.AbstractJdbcRepository;
 import com.futuristlabs.repos.jdbc.common.Parameters;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.PropertyAccessorFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
-import org.springframework.jdbc.core.PreparedStatementCallback;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class SampleData extends AbstractJdbcRepository {
 

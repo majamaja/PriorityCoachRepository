@@ -1,4 +1,4 @@
-package com.futuristlabs.spring.repos;
+package com.futuristlabs.repos;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;

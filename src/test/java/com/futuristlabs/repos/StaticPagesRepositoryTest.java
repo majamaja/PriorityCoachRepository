@@ -1,4 +1,4 @@
-package com.futuristlabs.spring.repos;
+package com.futuristlabs.repos;
 
 
 import com.futuristlabs.func.pages.StaticPage;
