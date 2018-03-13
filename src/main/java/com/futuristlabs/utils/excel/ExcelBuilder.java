@@ -17,10 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExcelBuilder<T> {
+    public static final String MIME_TYPE = "application/vnd.ms-excel";
+
     private static final DateTimeFormatter REPORT_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static final DateTimeFormatter DATETIME_FMT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+
+    private static final String CHECK = "\u2714";
 
     private final List<Column<T, Object>> columns;
 
@@ -55,9 +59,38 @@ public class ExcelBuilder<T> {
         return this;
     }
 
-    public XSSFWorkbook createWorkbook(final List<T> rows) {
+    public ResponseEntity<byte[]> createResponse(final String filename, final List<T> rows) {
+        final byte[] bytes = createFile(rows);
+        final String attach = String.format("attachment; filename=%s-%s.xlsx", filename, LocalDate.now().format(REPORT_FMT));
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf(MIME_TYPE));
+        headers.add("Content-Disposition", attach);
+        return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
+    }
+
+    private void set(final Cell cell, final Object value, final CellStyle alignCenter) {
+        if (value == null) {
+            cell.setCellType(CellType.BLANK);
+        } else if (value instanceof Boolean) {
+            if ((Boolean) value) {
+                cell.setCellStyle(alignCenter);
+                cell.setCellValue(CHECK);
+            } else {
+                cell.setCellType(CellType.BLANK);
+            }
+        } else if (value instanceof Number) {
+            cell.setCellValue(((Number) value).doubleValue());
+        } else {
+            // default to string for now - may handle date-times, formulas, etc ... later
+            cell.setCellValue(String.valueOf(value));
+        }
+    }
+
+    private XSSFWorkbook createWorkbook(final List<T> rows) {
         final XSSFWorkbook wb = new XSSFWorkbook();
         final XSSFSheet sheet = wb.createSheet();
+        final CellStyle alignCenter = wb.createCellStyle();
+        alignCenter.setAlignment(HorizontalAlignment.CENTER);
         int rowId = 0;
 
         // generate header
@@ -70,13 +103,16 @@ public class ExcelBuilder<T> {
             final CellStyle style = wb.createCellStyle();
             style.setFont(font);
             style.setAlignment(HorizontalAlignment.CENTER);
-            style.setShrinkToFit(true);
+            style.setShrinkToFit(false);
 
-            for (final Column<T, Object> columnDesc: columns) {
+            for (final Column<T, Object> columnDesc : columns) {
                 Cell cell = row.createCell(columnId++);
-                cell.setCellStyle(style);
                 cell.setCellValue(columnDesc.getHeader());
+                cell.setCellStyle(style);
             }
+
+            // freeze header row
+            sheet.createFreezePane(0, 1);
         }
 
         // generate rows
@@ -84,32 +120,28 @@ public class ExcelBuilder<T> {
             final Row row = sheet.createRow(rowId++);
             int columnId = 0;
 
-            for (final Column<T, Object> columnDesc: columns) {
-                Cell cell = row.createCell(columnId++);
-                final Object cellValue = columnDesc.getExtractor().extractValue(rowData);
-                cell.setCellValue(String.valueOf(cellValue != null ? cellValue : ""));
+            for (final Column<T, Object> columnDesc : columns) {
+                final Cell cell = row.createCell(columnId++);
+                final Object value = columnDesc.getExtractor().extractValue(rowData);
+                set(cell, value, alignCenter);
             }
+        }
+
+        // auto-ajust columns' width
+        for (int column = 0; column < columns.size(); column++) {
+            sheet.autoSizeColumn(column);
         }
 
         return wb;
     }
 
-    public ExcelFile createFile(final List<T> rows) {
+    private byte[] createFile(final List<T> rows) {
         try (final ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             final XSSFWorkbook wb = createWorkbook(rows);
             wb.write(os);
-            return new ExcelFile(os.toByteArray());
+            return os.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public ResponseEntity<byte[]> createResponse(final String filename, final List<T> rows) {
-        final ExcelFile xls = createFile(rows);
-        final String attach = String.format("attachment; filename=%s-%s.xlsx", filename, LocalDate.now().format(REPORT_FMT));
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.valueOf(ExcelFile.MIME_TYPE));
-        headers.add("Content-Disposition", attach);
-        return new ResponseEntity<>(xls.getBytes(), headers, HttpStatus.OK);
     }
 }

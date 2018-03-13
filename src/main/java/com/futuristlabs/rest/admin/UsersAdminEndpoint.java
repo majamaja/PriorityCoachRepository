@@ -2,7 +2,6 @@ package com.futuristlabs.rest.admin;
 
 import com.futuristlabs.func.users.*;
 import com.futuristlabs.utils.excel.ExcelBuilder;
-import com.futuristlabs.utils.excel.ExcelFile;
 import com.futuristlabs.utils.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +31,7 @@ public class UsersAdminEndpoint {
         return users.readPaged(page, sortBy, sortOrder, search);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET, produces = ExcelFile.MIME_TYPE)
+    @RequestMapping(value = "", method = RequestMethod.GET, produces = ExcelBuilder.MIME_TYPE)
     public ResponseEntity<byte[]> generateUsersReport(final @Valid UserSearch search,
                                                       final @RequestParam(name = "sortBy", required = false, defaultValue = "NAME") UserSortBy sortBy,
                                                       final @RequestParam(name = "sortOrder", required = false, defaultValue = "ASC") SortOrder sortOrder) {
