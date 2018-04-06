@@ -67,22 +67,27 @@ CREATE TABLE user_devices (
 );
 
 
--- Date & Time interval functions:
--- These assume that NULL values for start/end mean NO start/end for the interval.
-CREATE OR REPLACE FUNCTION is_inside(t TIMESTAMP, startTime TIMESTAMP, entTime TIMESTAMP)
-RETURNS BOOLEAN AS $$
+-- Simple guard function to avoid the complicated case-when-then-else-end syntax in the simple cases.
+CREATE OR REPLACE FUNCTION guard(cond BOOLEAN, res ANYELEMENT)
+RETURNS ANYELEMENT AS $$
 BEGIN
-    RETURN (startTime IS NULL OR t >= startTime) AND (entTime IS NULL OR t <= entTime);
+    RETURN
+        CASE
+            WHEN cond
+                THEN res
+                ELSE NULL
+        END;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION is_inside(t DATE, startDate DATE, endDate DATE)
+-- is_between interval function:
+-- it assumes that NULL values for start/end mean NO start/end for the interval.
+CREATE OR REPLACE FUNCTION is_between(t ANYELEMENT, startDate ANYELEMENT, endDate ANYELEMENT)
 RETURNS BOOLEAN AS $$
 BEGIN
     RETURN (startDate IS NULL OR t >= startDate) AND (endDate IS NULL OR t <= endDate);
 END;
-$$ LANGUAGE plpgsql;
-
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -- Function to calculate the distance btx. two points given their respective latitudes & longitudes
 -- Source: https://www.movable-type.co.uk/scripts/latlong.html. Uses `Spherical Law of Cosines`.
