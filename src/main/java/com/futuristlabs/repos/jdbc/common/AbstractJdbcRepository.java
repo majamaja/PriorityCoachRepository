@@ -1,11 +1,12 @@
 package com.futuristlabs.repos.jdbc.common;
 
-
+import org.postgresql.util.PGInterval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.UUID;
 
 public abstract class AbstractJdbcRepository {
@@ -51,6 +52,13 @@ public abstract class AbstractJdbcRepository {
 
     protected static ColumnMapper<LocalDateTime> getDateTime(final String name) {
         return new ColumnMapper<>(name, (rs, rowNum) -> rs.getTimestamp(name).toLocalDateTime());
+    }
+
+    protected static ColumnMapper<Period> getPeriod(final String name) {
+        return new ColumnMapper<>(name, (rs, rowNum) -> {
+            final PGInterval pg = (PGInterval) rs.getObject(name);
+            return rs.wasNull() ? null : Period.of(pg.getYears(), pg.getMonths(), pg.getDays());
+        });
     }
 
     protected static <T> RowMapper<T> getBean(final Class<T> clazz) {
