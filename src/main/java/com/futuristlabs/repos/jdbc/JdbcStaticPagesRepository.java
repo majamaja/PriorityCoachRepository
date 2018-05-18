@@ -38,9 +38,9 @@ public class JdbcStaticPagesRepository extends AbstractJdbcRepository implements
     @Override
     public void update(StaticPage page) {
         final String sql =
-            " UPDATE static_pages " +
-            " SET name = :name, header = :header, content = :content, updated_at = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC') " +
-            " WHERE id = :id";
+                " UPDATE static_pages " +
+                " SET name = :name, header = :header, content = :content, updated_at = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC') " +
+                " WHERE id = :id";
         db.update(sql, page);
     }
 

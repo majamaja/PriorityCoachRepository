@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 import static java.sql.Connection.TRANSACTION_REPEATABLE_READ;
 
 @Configuration
-@ComponentScan({"com.futuristlabs.repos.jdbc"})
+@ComponentScan({ "com.futuristlabs.repos.jdbc" })
 @EnableTransactionManagement(proxyTargetClass = true)
 public class RepositoryTestConfig {
     private static final String JDBC_DATABASE_URL = "JDBC_DATABASE_URL";

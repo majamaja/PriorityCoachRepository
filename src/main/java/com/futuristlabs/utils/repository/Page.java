@@ -12,8 +12,10 @@ public class Page {
         return new Page(0, null);
     }
 
-    private @Min(value = 1) int pageNumber;
-    private @Min(value = 1) Integer pageSize;
+    private @Min(value = 1)
+    int pageNumber;
+    private @Min(value = 1)
+    Integer pageSize;
 
     public Page() {
         this(1, 10);

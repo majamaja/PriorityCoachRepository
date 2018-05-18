@@ -1,6 +1,8 @@
 package com.futuristlabs.repos.jdbc;
 
-import com.futuristlabs.func.users.*;
+import com.futuristlabs.func.users.User;
+import com.futuristlabs.func.users.UserSearch;
+import com.futuristlabs.func.users.UsersRepository;
 import com.futuristlabs.repos.jdbc.common.AbstractJdbcRepository;
 import com.futuristlabs.repos.jdbc.common.InsertResult;
 import com.futuristlabs.repos.jdbc.common.Parameters;
@@ -60,9 +62,9 @@ public class JdbcUsersRepository extends AbstractJdbcRepository implements Users
     public boolean changePassword(UUID userId, String oldPassword, String newPassword) {
         final String sql =
                 " UPDATE users SET " +
-                        "   password = :new, " +
-                        "   last_password_change = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC') " +
-                        " WHERE id = :id AND password = :old";
+                "   password = :new, " +
+                "   last_password_change = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC') " +
+                " WHERE id = :id AND password = :old";
         final int updated = db.update(sql, set("id", userId), set("old", encrypt(oldPassword)), set("new", encrypt(newPassword)));
         return updated > 0;
     }
@@ -71,9 +73,9 @@ public class JdbcUsersRepository extends AbstractJdbcRepository implements Users
     public boolean resetPassword(String email, String newPassword) {
         final String sql =
                 " UPDATE users SET " +
-                        "   password = :new, " +
-                        "   last_password_change = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC') " +
-                        " WHERE email = :email ";
+                "   password = :new, " +
+                "   last_password_change = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC') " +
+                " WHERE email = :email ";
         final int updated = db.update(sql, set("email", email), set("new", encrypt(newPassword)));
         return updated > 0;
     }

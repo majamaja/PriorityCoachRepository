@@ -14,41 +14,42 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.futuristlabs.func.auth.AuthType.*;
+import static com.futuristlabs.func.auth.AuthType.ADMIN;
+import static com.futuristlabs.func.auth.AuthType.USER;
 
 @Component
 public class AuthService {
-	@Autowired
-	private AdminUsersRepository admins;
+    @Autowired
+    private AdminUsersRepository admins;
 
-	@Autowired
-	private UsersRepository users;
+    @Autowired
+    private UsersRepository users;
 
-	@Autowired
-	private AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-	@SuppressWarnings("unchecked")
-	private <T extends UserDetails> T authenticate(final String username, final String password) {
-		final UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
+    @SuppressWarnings("unchecked")
+    private <T extends UserDetails> T authenticate(final String username, final String password) {
+        final UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
 
-		final Authentication auth = authenticationManager.authenticate(authRequest);
-		final SecurityContext securityContext = SecurityContextHolder.getContext();
-		securityContext.setAuthentication(auth);
+        final Authentication auth = authenticationManager.authenticate(authRequest);
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(auth);
 
-		return (T) auth.getPrincipal();
-	}
+        return (T) auth.getPrincipal();
+    }
 
-	@Transactional
-	public CustomUserDetails authenticateUser(final String username, final String password) {
-		final CustomUserDetails details = authenticate(USER.getToken() + username, password);
-		users.loginById(details.getId());
-		return details;
-	}
+    @Transactional
+    public CustomUserDetails authenticateUser(final String username, final String password) {
+        final CustomUserDetails details = authenticate(USER.getToken() + username, password);
+        users.loginById(details.getId());
+        return details;
+    }
 
-	@Transactional
-	public AdminUserDetails authenticateAdmin(final String username, final String password) {
-		final AdminUserDetails details = authenticate(ADMIN.getToken() + username, password);
-		admins.loginById(details.getAdminUser().getId());
-		return details;
-	}
+    @Transactional
+    public AdminUserDetails authenticateAdmin(final String username, final String password) {
+        final AdminUserDetails details = authenticate(ADMIN.getToken() + username, password);
+        admins.loginById(details.getAdminUser().getId());
+        return details;
+    }
 }

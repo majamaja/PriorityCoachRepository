@@ -8,5 +8,5 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class CreateResourceResponse {
-	private final UUID resourceId;
+    private final UUID resourceId;
 }

@@ -32,14 +32,14 @@ public class ApnsNotificationProvider implements NotificationProvider {
             final Resource apnCertificate = isDev ? apnDevCertificate : apnProdCertificate;
 
             service = APNS.newService()
-                    .withCert(apnCertificate.getInputStream(), APN_CERT_PASSWORD)
-                    .withAppleDestination(isProduction)
-                    .build();
+                          .withCert(apnCertificate.getInputStream(), APN_CERT_PASSWORD)
+                          .withAppleDestination(isProduction)
+                          .build();
 
             final List<String> tokens = devices.stream()
-                    .filter(device -> device.getType().equals("iOS"))
-                    .map(UserDevice::getToken)
-                    .collect(Collectors.toList());
+                                               .filter(device -> device.getType().equals("iOS"))
+                                               .map(UserDevice::getToken)
+                                               .collect(Collectors.toList());
 
             System.out.println(String.format("service: %s, is prod: %b", service, isProduction));
             System.out.println(payload);

@@ -1,9 +1,10 @@
 package com.futuristlabs.rest.admin;
 
 import com.futuristlabs.func.admins.*;
-import com.futuristlabs.func.admins.AdminUserDetails;
 import com.futuristlabs.func.auth.ChangePasswordRequest;
-import com.futuristlabs.utils.repository.*;
+import com.futuristlabs.utils.repository.Page;
+import com.futuristlabs.utils.repository.PageData;
+import com.futuristlabs.utils.repository.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

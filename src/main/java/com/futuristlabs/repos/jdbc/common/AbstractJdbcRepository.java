@@ -22,7 +22,7 @@ public abstract class AbstractJdbcRepository {
 
     @SuppressWarnings("unchecked")
     protected <T> RowMapper<T> get(final String name) {
-        return new ColumnMapper<>(name, (rs, rowNum) -> (T)rs.getObject(name));
+        return new ColumnMapper<>(name, (rs, rowNum) -> (T) rs.getObject(name));
     }
 
     protected static ColumnMapper<Boolean> getBool(final String name) {

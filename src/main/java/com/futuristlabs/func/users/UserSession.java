@@ -1,6 +1,5 @@
 package com.futuristlabs.func.users;
 
-import com.futuristlabs.func.users.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

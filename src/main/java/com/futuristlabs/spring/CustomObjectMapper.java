@@ -34,10 +34,10 @@ public class CustomObjectMapper extends ObjectMapper {
         setLocale(Locale.ENGLISH);
         registerModule(
                 getLocalDateConfiguration()
-        );
+                      );
         registerModule(
                 getTrimStringsModule()
-        );
+                      );
 
         setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
@@ -47,11 +47,11 @@ public class CustomObjectMapper extends ObjectMapper {
                 .addSerializer(
                         LocalDateTime.class,
                         new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(JSON_TIMESTAMP_PATTERN))
-                )
+                              )
                 .addDeserializer(
                         LocalDateTime.class,
                         new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(JSON_TIMESTAMP_PATTERN))
-                );
+                                );
     }
 
     private SimpleModule getTrimStringsModule() {

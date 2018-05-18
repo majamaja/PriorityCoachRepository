@@ -6,7 +6,10 @@ import com.futuristlabs.func.admins.AdminUsersRepository;
 import com.futuristlabs.repos.jdbc.common.AbstractJdbcRepository;
 import com.futuristlabs.repos.jdbc.common.Parameters;
 import com.futuristlabs.utils.crypto.CryptoUtils;
-import com.futuristlabs.utils.repository.*;
+import com.futuristlabs.utils.repository.Page;
+import com.futuristlabs.utils.repository.PageData;
+import com.futuristlabs.utils.repository.SortBy;
+import com.futuristlabs.utils.repository.SortOrder;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;

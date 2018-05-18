@@ -12,7 +12,7 @@ public class InsertResult {
 
     @SuppressWarnings("unchecked")
     public <T> T get(final String name) {
-        return (T)holder.getKeys().get(name);
+        return (T) holder.getKeys().get(name);
     }
 
     public UUID getId() {

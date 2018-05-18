@@ -13,13 +13,13 @@ import java.io.IOException;
 
 @Component
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
-	private static final Log LOG = LogFactory.getLog(AuthenticationEntryPointImpl.class);
+    private static final Log LOG = LogFactory.getLog(AuthenticationEntryPointImpl.class);
 
-	@Override
-	public void commence(final HttpServletRequest request,
-						 final HttpServletResponse response,
-						 final AuthenticationException authException) throws IOException, ServletException {
-		LOG.error("Error in authentication. Reason: " + authException.getMessage(), authException);
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-	}
+    @Override
+    public void commence(final HttpServletRequest request,
+                         final HttpServletResponse response,
+                         final AuthenticationException authException) throws IOException, ServletException {
+        LOG.error("Error in authentication. Reason: " + authException.getMessage(), authException);
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+    }
 }

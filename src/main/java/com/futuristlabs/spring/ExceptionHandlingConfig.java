@@ -1,7 +1,7 @@
 package com.futuristlabs.spring;
 
-import com.futuristlabs.func.exceptions.ApplicationException;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.futuristlabs.func.exceptions.ApplicationException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -66,8 +66,8 @@ public class ExceptionHandlingConfig extends ResponseEntityExceptionHandler {
 
         static ValidationErrors from(final BindingResult br) {
             final List<ValidationError> errors = br.getFieldErrors().stream()
-                    .map(field -> new ValidationError(field.getField(), field.getDefaultMessage()))
-                    .collect(toList());
+                                                   .map(field -> new ValidationError(field.getField(), field.getDefaultMessage()))
+                                                   .collect(toList());
 
             return new ValidationErrors(errors);
         }
@@ -85,7 +85,7 @@ public class ExceptionHandlingConfig extends ResponseEntityExceptionHandler {
         return new ErrorDescription(exception.getMessage());
     }
 
-    @ExceptionHandler({ApplicationException.class})
+    @ExceptionHandler({ ApplicationException.class })
     protected ResponseEntity<Object> handleApplicationExceptions(ApplicationException ex, WebRequest request) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -95,17 +95,17 @@ public class ExceptionHandlingConfig extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(message, headers, status);
     }
 
-    @ExceptionHandler({EmptyResultDataAccessException.class, NoSuchElementException.class})
+    @ExceptionHandler({ EmptyResultDataAccessException.class, NoSuchElementException.class })
     protected ResponseEntity<Object> handleNotFound(Exception ex, WebRequest request) {
         return Errors.NOT_FOUND.response(new HttpHeaders());
     }
 
-    @ExceptionHandler({DuplicateKeyException.class})
+    @ExceptionHandler({ DuplicateKeyException.class })
     protected ResponseEntity<Object> handleDuplicateKeyException(DuplicateKeyException ex, WebRequest request) {
         return Errors.DUPLICATE_DATA.response(new HttpHeaders());
     }
 
-    @ExceptionHandler({DataIntegrityViolationException.class})
+    @ExceptionHandler({ DataIntegrityViolationException.class })
     protected ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
         return Errors.CONSTRAINT_VIOLATION.response(new HttpHeaders());
     }

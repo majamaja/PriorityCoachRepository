@@ -1,11 +1,7 @@
 package com.futuristlabs.rest.v1_0;
 
 import com.futuristlabs.func.auth.ChangePasswordRequest;
-import com.futuristlabs.func.users.CustomUserDetails;
-import com.futuristlabs.func.users.UserSession;
-import com.futuristlabs.func.users.ForgottenPasswordRequest;
-import com.futuristlabs.func.users.User;
-import com.futuristlabs.func.users.Users;
+import com.futuristlabs.func.users.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

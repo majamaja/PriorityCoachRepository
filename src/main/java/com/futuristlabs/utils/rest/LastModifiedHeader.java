@@ -20,7 +20,7 @@ public class LastModifiedHeader<T> {
 
     private void setLastModified(HttpServletResponse response, LocalDateTime lastModified) {
         response.addHeader("Last-Modified",
-                DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz").format(lastModified.atZone(ZoneId.systemDefault())));
+                           DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz").format(lastModified.atZone(ZoneId.systemDefault())));
     }
 
     public <U extends T> U setAndReturn(HttpServletResponse response, U entry) {

@@ -1,7 +1,10 @@
 package com.futuristlabs.repos.jdbc.common;
 
 import com.futuristlabs.utils.Pair;
-import com.futuristlabs.utils.repository.*;
+import com.futuristlabs.utils.repository.Page;
+import com.futuristlabs.utils.repository.PageData;
+import com.futuristlabs.utils.repository.SortBy;
+import com.futuristlabs.utils.repository.SortOrder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +42,7 @@ public class SpringDB {
         return new CustomBeanPropertyRowMapper<>(beanClass);
     }
 
-    private  <T, U> U checked(final RowMapper<T> mapper, final String sql, final Parameters params, Function<T, U> resultConverter) {
+    private <T, U> U checked(final RowMapper<T> mapper, final String sql, final Parameters params, Function<T, U> resultConverter) {
         T res = null;
         try {
             res = row(mapper, sql, params);
@@ -54,7 +57,7 @@ public class SpringDB {
         return checked(mapper, sql, params, Function.identity());
     }
 
-    public <T> T safe(final RowMapper<T> mapper, final String sql, Parameter<?> ... params) {
+    public <T> T safe(final RowMapper<T> mapper, final String sql, Parameter<?>... params) {
         return safe(mapper, sql, Parameters.fromList(params));
     }
 
@@ -62,7 +65,7 @@ public class SpringDB {
         return safe(beanMapper(beanClass), sql, params);
     }
 
-    public <T> T safe(final Class<T> beanClass, final String sql, Parameter<?> ... params) {
+    public <T> T safe(final Class<T> beanClass, final String sql, Parameter<?>... params) {
         return safe(beanClass, sql, Parameters.fromList(params));
     }
 
@@ -70,7 +73,7 @@ public class SpringDB {
         return checked(mapper, sql, params, Optional::ofNullable);
     }
 
-    public <T> Optional<T> optional(final RowMapper<T> mapper, final String sql, Parameter<?> ... params) {
+    public <T> Optional<T> optional(final RowMapper<T> mapper, final String sql, Parameter<?>... params) {
         return optional(mapper, sql, Parameters.fromList(params));
     }
 
@@ -78,7 +81,7 @@ public class SpringDB {
         return optional(beanMapper(beanClass), sql, params);
     }
 
-    public <T> Optional<T> optional(final Class<T> beanClass, final String sql, Parameter<?> ... params) {
+    public <T> Optional<T> optional(final Class<T> beanClass, final String sql, Parameter<?>... params) {
         return optional(beanClass, sql, Parameters.fromList(params));
     }
 
@@ -86,7 +89,7 @@ public class SpringDB {
         return template.queryForObject(sql, params, mapper);
     }
 
-    public <T> T row(final RowMapper<T> mapper, final String sql, Parameter<?> ... params) {
+    public <T> T row(final RowMapper<T> mapper, final String sql, Parameter<?>... params) {
         return row(mapper, sql, Parameters.fromList(params));
     }
 
@@ -94,7 +97,7 @@ public class SpringDB {
         return row(beanMapper(beanClass), sql, params);
     }
 
-    public <T> T getBean(final Class<T> beanClass, final String sql, Parameter<?> ... params) {
+    public <T> T getBean(final Class<T> beanClass, final String sql, Parameter<?>... params) {
         return getBean(beanClass, sql, Parameters.fromList(params));
     }
 
@@ -102,7 +105,7 @@ public class SpringDB {
         return template.query(sql, params, mapper);
     }
 
-    public <T> List<T> list(final RowMapper<T> mapper, final String sql, Parameter<?> ... params) {
+    public <T> List<T> list(final RowMapper<T> mapper, final String sql, Parameter<?>... params) {
         return list(mapper, sql, Parameters.fromList(params));
     }
 
@@ -110,7 +113,7 @@ public class SpringDB {
         return list(beanMapper(beanClass), sql, params);
     }
 
-    public <T> List<T> list(final Class<T> beanClass, final String sql, Parameter<?> ... params) {
+    public <T> List<T> list(final Class<T> beanClass, final String sql, Parameter<?>... params) {
         return list(beanClass, sql, Parameters.fromList(params));
     }
 
@@ -120,19 +123,19 @@ public class SpringDB {
 
     public <K, V> Map<K, V> map(RowMapper<? extends K> key, RowMapper<? extends V> val, final String sql, final Parameters params) {
         return list(makePair(key, val), sql, params).stream()
-                .collect(toMap(Pair::getFirst, Pair::getSecond));
+                                                    .collect(toMap(Pair::getFirst, Pair::getSecond));
     }
 
-    public <K, V> Map<K, V> map(RowMapper<? extends K> key, RowMapper<? extends V> val, final String sql, Parameter<?> ... params) {
+    public <K, V> Map<K, V> map(RowMapper<? extends K> key, RowMapper<? extends V> val, final String sql, Parameter<?>... params) {
         return map(key, val, sql, Parameters.fromList(params));
     }
 
     public <K, V> Map<K, List<V>> group(RowMapper<? extends K> key, RowMapper<? extends V> val, final String sql, final Parameters params) {
         return list(makePair(key, val), sql, params).stream()
-                .collect(groupingBy(Pair::getFirst, mapping(Pair::getSecond, toList())));
+                                                    .collect(groupingBy(Pair::getFirst, mapping(Pair::getSecond, toList())));
     }
 
-    public <K, V> Map<K, List<V>> group(RowMapper<? extends K> key, RowMapper<? extends V> val, final String sql, Parameter<?> ... params) {
+    public <K, V> Map<K, List<V>> group(RowMapper<? extends K> key, RowMapper<? extends V> val, final String sql, Parameter<?>... params) {
         return group(key, val, sql, Parameters.fromList(params));
     }
 
@@ -150,7 +153,7 @@ public class SpringDB {
         return new PageData<>(items, itemsCount, page, sortBy, sortOrder);
     }
 
-    public <T> PageData<T> getPage(Class<T> beanClass, final String sql, final Page page, final SortBy<T> sortBy, final SortOrder sortOrder, Parameter<?> ... params) {
+    public <T> PageData<T> getPage(Class<T> beanClass, final String sql, final Page page, final SortBy<T> sortBy, final SortOrder sortOrder, Parameter<?>... params) {
         return getPage(beanClass, sql, page, sortBy, sortOrder, Parameters.fromList(params));
     }
 
@@ -161,11 +164,11 @@ public class SpringDB {
         return new InsertResult(keyHolder, updatedRowsCount);
     }
 
-    public InsertResult insert(String sql, Parameter<?> ... params) {
+    public InsertResult insert(String sql, Parameter<?>... params) {
         return insert(sql, Parameters.fromList(params));
     }
 
-    public <T> InsertResult insert(String sql, T bean, Parameter<?> ... params) {
+    public <T> InsertResult insert(String sql, T bean, Parameter<?>... params) {
         return insert(sql, new Parameters(bean).setAll(params));
     }
 
@@ -174,11 +177,11 @@ public class SpringDB {
         return template.update(sql, params);
     }
 
-    public int update(String sql, Parameter<?> ... params) {
+    public int update(String sql, Parameter<?>... params) {
         return update(sql, Parameters.fromList(params));
     }
 
-    public <T> int update(String sql, T bean, Parameter<?> ... params) {
+    public <T> int update(String sql, T bean, Parameter<?>... params) {
         return update(sql, new Parameters(bean).setAll(params));
     }
 }

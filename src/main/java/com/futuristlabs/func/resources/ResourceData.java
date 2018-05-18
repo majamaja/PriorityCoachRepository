@@ -9,8 +9,8 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 public class ResourceData {
-	private UUID id;
-	private LocalDateTime createdAt;
-	private String mimeType;
-	private byte[] content;
+    private UUID id;
+    private LocalDateTime createdAt;
+    private String mimeType;
+    private byte[] content;
 }

@@ -10,16 +10,16 @@ import java.time.LocalDateTime;
 
 @RestController
 public class ApplicationStatusEndpoint {
-	@AllArgsConstructor
-	@Data
-	private static class ApplicationStatusResponse {
-		private final String status;
-		private final String apiVersion;
-		private final LocalDateTime timestamp;
-	}
+    @AllArgsConstructor
+    @Data
+    private static class ApplicationStatusResponse {
+        private final String status;
+        private final String apiVersion;
+        private final LocalDateTime timestamp;
+    }
 
-	@RequestMapping(value = "/status", method = RequestMethod.GET)
-	public ApplicationStatusResponse getApplicationStatus() {
-		return new ApplicationStatusResponse("ok", "v1.0", LocalDateTime.now());
-	}
+    @RequestMapping(value = "/status", method = RequestMethod.GET)
+    public ApplicationStatusResponse getApplicationStatus() {
+        return new ApplicationStatusResponse("ok", "v1.0", LocalDateTime.now());
+    }
 }

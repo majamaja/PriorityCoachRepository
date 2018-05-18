@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.transaction.annotation.Isolation.REPEATABLE_READ;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {RepositoryTestConfig.class})
+@ContextConfiguration(classes = { RepositoryTestConfig.class })
 @Transactional(isolation = REPEATABLE_READ)
 public class BaseRepositoryTest {
 
