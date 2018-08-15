@@ -29,8 +29,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final int MONTH = 60 * 60 * 24 * 30;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+//    @Autowired
+//    private UserDetailsService userDetailsService;
+
+    /*
+    <sec:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless"
+              entry-point-ref="customAuthenticationEntryPoint">
+        <sec:custom-filter ref="authenticationTokenProcessingFilter" position="BASIC_AUTH_FILTER"/>
+    </sec:http>
+     */
 
     @Autowired
     private AuthenticationEntryPoint authenticationEntryPoint;
@@ -47,42 +54,35 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // CORS
                 .regexMatchers(OPTIONS, ".*").permitAll()
 
-                // common
-                .regexMatchers(GET, "/status").permitAll()
-                .regexMatchers(GET, "/v1.0/pages/.*").permitAll()
-
-                // user registration
-                .regexMatchers(POST, "/v1.0/users").permitAll()
-
-                // login
-                .regexMatchers(POST, "/v1.0/sessions").permitAll()
-                .regexMatchers(POST, "/v1.0/users/forgotten-password").permitAll()
-                .regexMatchers(POST, "/admin/sessions").permitAll()
-                .regexMatchers(POST, "/admin/admin-users/forgotten-password").permitAll()
-
-                // default
-                .regexMatchers("/v1.0/.*").hasAuthority("USER")
-                .regexMatchers("/admin/.*").hasAuthority("ADMIN")
+                .regexMatchers("/v1/test").permitAll()
+                .regexMatchers("/v1/login").permitAll()
+                .regexMatchers("/v1/register").permitAll()
+                .regexMatchers("/v1/reset-password").permitAll()
+                .regexMatchers("/v1/sync/reference").permitAll()
+                .regexMatchers("/admin/.*").permitAll()
 
                 // swagger
-                .antMatchers("/v2/api-docs", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll();
+                .antMatchers("/v2/api-docs", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
+
+                // default
+                .regexMatchers("/.*").authenticated();
     }
 
-    @Autowired
-    public void configurationGlobal(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(new PasswordEncoder() {
-            @Override
-            public String encode(CharSequence rawPassword) {
-                return encodePassword(rawPassword);
-            }
-
-            @Override
-            public boolean matches(CharSequence rawPassword, String encodedPassword) {
-                String passToCompare = encodePassword(rawPassword);
-                return passToCompare.equals(encodedPassword);
-            }
-        });
-    }
+//    @Autowired
+//    public void configurationGlobal(final AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(userDetailsService).passwordEncoder(new PasswordEncoder() {
+//            @Override
+//            public String encode(CharSequence rawPassword) {
+//                return encodePassword(rawPassword);
+//            }
+//
+//            @Override
+//            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+//                String passToCompare = encodePassword(rawPassword);
+//                return passToCompare.equals(encodedPassword);
+//            }
+//        });
+//    }
 
     @Bean
     public HttpSessionStrategy httpSessionStrategy() {

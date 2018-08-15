@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
 
 import static java.util.stream.Collectors.toList;
 
-@ControllerAdvice
+//@ControllerAdvice
 public class ExceptionHandlingConfig extends ResponseEntityExceptionHandler {
     private enum Errors {
         INVALID_JSON(HttpStatus.BAD_REQUEST),

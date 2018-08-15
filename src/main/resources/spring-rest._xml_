@@ -1,0 +1,29 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+                    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+    <!-- Configures view for returning JSON to the client -->
+    <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+        <property name="contentType" value="application/json"/>
+    </bean>
+
+    <!-- Converts JSON to POJO and vice versa -->
+    <bean id="customObjectMapper" class="com.futuristlabs.p2p.spring.CustomObjectMapper"/>
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+                <property name="objectMapper" ref="customObjectMapper"/>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <bean id="customAuthenticationEntryPoint"
+          class="com.futuristlabs.p2p.spring.CustomAuthenticationEntryPoint"/>
+
+    <sec:authentication-manager alias="authenticationManager"/>
+
+</beans>

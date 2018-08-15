@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ApnsNotificationProvider implements NotificationProvider {
+public class NewApnsNotificationProvider implements NotificationProvider {
     final String APN_CERT_PASSWORD = "";
 
     @Value(value = "classpath:APNCertificatesDev.p12")

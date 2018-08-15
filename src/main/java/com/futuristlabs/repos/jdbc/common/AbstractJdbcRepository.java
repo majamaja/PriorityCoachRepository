@@ -10,10 +10,10 @@ import java.time.Period;
 import java.util.UUID;
 
 public abstract class AbstractJdbcRepository {
-    protected SpringDB db;
+    protected NewSpringDB db;
 
     @Autowired
-    public void setDb(SpringDB db) {
+    public void setDb(NewSpringDB db) {
         this.db = db;
     }
 

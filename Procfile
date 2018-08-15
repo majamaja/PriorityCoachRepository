@@ -1,1 +1,1 @@
-web: java -Xmx448m -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/futuristlabs-backend-0.0.1-SNAPSHOT.war
+web: java -Xmx448m -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/priority-coach-backend-1.0.war

@@ -19,11 +19,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 @Component
-public class CustomObjectMapper extends ObjectMapper {
+public class NewCustomObjectMapper extends ObjectMapper {
 
     private static final String JSON_TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-    public CustomObjectMapper() {
+    public NewCustomObjectMapper() {
         super();
         configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false);

@@ -3,7 +3,7 @@ package com.futuristlabs.repos.jdbc;
 import com.futuristlabs.func.properties.SystemPropertiesRepository;
 import com.futuristlabs.func.properties.SystemProperty;
 import com.futuristlabs.repos.jdbc.common.AbstractJdbcRepository;
-import com.futuristlabs.repos.jdbc.common.SpringDB;
+import com.futuristlabs.repos.jdbc.common.NewSpringDB;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +19,11 @@ public class JdbcSystemPropertiesRepository extends AbstractJdbcRepository imple
 
     @Autowired
     @Override
-    public void setDb(final SpringDB db) {
+    public void setDb(final NewSpringDB db) {
         super.setDb(db);
 
         // initialize properties - this SHOULD be thread safe as the setter SHOULD be called only once by Spring.
-        final String sql = "SELECT name, value FROM system_properties";
+        final String sql = "SELECT parameter_key as name, parameter_value as value FROM system_parameters";
         this.properties = db.map(getString("name"), getString("value").optional(), sql);
 
         if (log.isInfoEnabled()) {

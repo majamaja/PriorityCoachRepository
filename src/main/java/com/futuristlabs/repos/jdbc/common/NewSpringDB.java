@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.*;
 
 @Component
-public class SpringDB {
+public class NewSpringDB {
     private final Log log = LogFactory.getLog(getClass());
 
     private DataSource dataSource;
@@ -130,14 +130,14 @@ public class SpringDB {
         return map(key, val, sql, Parameters.fromList(params));
     }
 
-    public <K, V> Map<K, List<V>> group(RowMapper<? extends K> key, RowMapper<? extends V> val, final String sql, final Parameters params) {
-        return list(makePair(key, val), sql, params).stream()
-                                                    .collect(groupingBy(Pair::getFirst, mapping(Pair::getSecond, toList())));
-    }
+//    public <K, V> Map<K, List<V>> group(RowMapper<? extends K> key, RowMapper<? extends V> val, final String sql, final Parameters params) {
+//        return list(makePair(key, val), sql, params).stream()
+//                                                    .collect(groupingBy(Pair::getFirst, mapping(Pair::getSecond, toList())));
+//    }
 
-    public <K, V> Map<K, List<V>> group(RowMapper<? extends K> key, RowMapper<? extends V> val, final String sql, Parameter<?>... params) {
-        return group(key, val, sql, Parameters.fromList(params));
-    }
+//    public <K, V> Map<K, List<V>> group(RowMapper<? extends K> key, RowMapper<? extends V> val, final String sql, Parameter<?>... params) {
+//        return group(key, val, sql, Parameters.fromList(params));
+//    }
 
     // paginated
     public <T> PageData<T> getPage(Class<T> beanClass, final String sql, final Page page, final SortBy<T> sortBy, final SortOrder sortOrder, final Parameters params) {

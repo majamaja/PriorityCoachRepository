@@ -14,6 +14,6 @@ public class WebMvcConfig extends WebMvcAutoConfiguration {
     @Primary
     @Bean
     public ObjectMapper objectMapper() {
-        return new CustomObjectMapper();
+        return new NewCustomObjectMapper();
     }
 }

@@ -16,14 +16,16 @@ public class EmailConfig {
 
     @Bean
     public EmailSender emailSender() {
-        final String host = properties.findByName(SMTP_HOST).get();
-        final int port = Integer.parseInt(properties.findByName(SMTP_PORT).get());
-        final String user = properties.findByName(SMTP_USERNAME).get();
-        final String pass = properties.findByName(SMTP_PASSWORD).get();
-        final String from = properties.findByName(SMTP_FROM).get();
-        final String alias = properties.findByName(SMTP_FROM_ALIAS).get();
-        final boolean useSSL = Boolean.parseBoolean(properties.findByName(SMTP_USE_SSL).get());
+//        final String host = properties.findByName(SMTP_HOST).get();
+//        final int port = Integer.parseInt(properties.findByName(SMTP_PORT).get());
+//        final String user = properties.findByName(SMTP_USERNAME).get();
+//        final String pass = properties.findByName(SMTP_PASSWORD).get();
+//        final String from = properties.findByName(SMTP_FROM).get();
+//        final String alias = properties.findByName(SMTP_FROM_ALIAS).get();
+//        final boolean useSSL = Boolean.parseBoolean(properties.findByName(SMTP_USE_SSL).get());
 
-        return new EmailSender(host, port, user, pass, from, alias, useSSL);
+//        return new EmailSender(host, port, user, pass, from, alias, useSSL);
+        // TODO XXX
+        return null;
     }
 }

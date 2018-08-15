@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '1.5.8.RELEASE'
+		springBootVersion = '1.5.15.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -11,14 +11,13 @@ buildscript {
 }
 
 apply plugin: 'java'
-apply plugin: 'eclipse-wtp'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 apply plugin: 'idea'
 
 war {
-    baseName = 'futuristlabs-backend'
-    version = '0.0.1-SNAPSHOT'
+    baseName = 'priority-coach-backend'
+    version = '1.0'
 }
 
 sourceCompatibility = 1.8
@@ -33,6 +32,7 @@ configurations {
 }
 
 dependencies {
+    // === Spring ===
 	compile('org.springframework.boot:spring-boot-starter-jersey')
 	compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-security')
@@ -40,15 +40,36 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
 	compile('org.springframework.boot:spring-boot-starter-mail')
     compile('org.springframework.session:spring-session')
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.5")
-	compile('org.apache.velocity:velocity:1.7')
-	compile("com.notnoop.apns:apns:1.0.0.Beta6")
-	compileOnly('org.projectlombok:lombok')
-	compile("org.apache.commons:commons-dbcp2:2.1.1")
-	compile('org.postgresql:postgresql:42.2.1')
-	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+    // === Test ===
+    testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
+
+    // === Runtime ===
+    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+
+    // === Code Generation ===
+    compileOnly('org.projectlombok:lombok')
+
+    // === DB ===
+    compile("org.apache.commons:commons-dbcp2:2.1.1")
+//    compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.2.2'
+    compile group: 'commons-pool', name: 'commons-pool', version: '1.6'
+    
+    compile('org.postgresql:postgresql:42.2.1')
+    compile "mysql:mysql-connector-java:5.1.46"
+
+    // === Templates ===
+    compile "org.codehaus.jackson:jackson-core-asl:1.9.13"
+    compile "org.codehaus.jackson:jackson-mapper-asl:1.9.13"
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.5")
+    compile('org.apache.velocity:velocity:1.7')
+
+    // === Date & Time ===
+    compile "joda-time:joda-time:2.9.1"
+
+    // === Push Notifications ===
+	compile("com.notnoop.apns:apns:1.0.0.Beta6")
 
 	// === Swagger ===
 	compile('io.springfox:springfox-swagger2:2.8.0')

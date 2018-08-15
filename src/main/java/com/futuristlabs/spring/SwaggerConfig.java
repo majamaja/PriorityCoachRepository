@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
 
-@Configuration
-@EnableSwagger2
+//@Configuration
+//@EnableSwagger2
 public class SwaggerConfig {
     @Bean
     public Docket mobile() {
