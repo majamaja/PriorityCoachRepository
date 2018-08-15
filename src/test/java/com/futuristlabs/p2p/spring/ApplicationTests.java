@@ -1,4 +1,4 @@
-package com.futuristlabs.spring;
+package com.futuristlabs.p2p.spring;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,5 +1,6 @@
-package com.futuristlabs.repos;
+package com.futuristlabs.p2p;
 
+import com.futuristlabs.p2p.repos.SampleData;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,7 +17,7 @@ import javax.sql.DataSource;
 import static java.sql.Connection.TRANSACTION_REPEATABLE_READ;
 
 @Configuration
-@ComponentScan({ "com.futuristlabs.repos.jdbc", "com.futuristlabs.p2p.repos.jdbc" })
+@ComponentScan({ "com.futuristlabs.repos.jdbc", "com.futuristlabs.p2p.repos" })
 @EnableTransactionManagement(proxyTargetClass = true)
 public class RepositoryTestConfig {
     private static final String JDBC_DATABASE_URL = "JDBC_DATABASE_URL";

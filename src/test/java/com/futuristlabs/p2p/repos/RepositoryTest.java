@@ -1,6 +1,6 @@
 package com.futuristlabs.p2p.repos;
 
-import com.futuristlabs.repos.RepositoryTestConfig;
+import com.futuristlabs.p2p.RepositoryTestConfig;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

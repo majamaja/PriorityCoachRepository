@@ -1,4 +1,4 @@
-package com.futuristlabs.spring;
+package com.futuristlabs.p2p.spring;
 
 import org.springframework.session.web.context.AbstractHttpSessionApplicationInitializer;
 import org.springframework.stereotype.Component;

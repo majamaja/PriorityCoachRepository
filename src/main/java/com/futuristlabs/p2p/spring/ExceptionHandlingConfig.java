@@ -1,4 +1,4 @@
-package com.futuristlabs.spring;
+package com.futuristlabs.p2p.spring;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.futuristlabs.func.exceptions.ApplicationException;

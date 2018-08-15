@@ -1,4 +1,4 @@
-package com.futuristlabs.spring;
+package com.futuristlabs.p2p.spring;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;

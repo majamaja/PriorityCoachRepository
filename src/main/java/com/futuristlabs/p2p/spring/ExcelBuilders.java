@@ -1,4 +1,4 @@
-package com.futuristlabs.spring;
+package com.futuristlabs.p2p.spring;
 
 import com.futuristlabs.func.users.User;
 import com.futuristlabs.utils.excel.ExcelBuilder;

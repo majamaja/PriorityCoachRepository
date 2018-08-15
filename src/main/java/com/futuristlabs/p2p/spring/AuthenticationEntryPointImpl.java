@@ -1,4 +1,4 @@
-package com.futuristlabs.spring;
+package com.futuristlabs.p2p.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

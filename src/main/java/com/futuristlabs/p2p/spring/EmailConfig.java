@@ -1,4 +1,4 @@
-package com.futuristlabs.spring;
+package com.futuristlabs.p2p.spring;
 
 import com.futuristlabs.func.properties.SystemPropertiesRepository;
 import com.futuristlabs.utils.emails.EmailSender;
