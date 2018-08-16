@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Repository
 public class JDBCReferenceRepository extends JDBCRepository implements ReferenceRepository {
@@ -235,7 +237,6 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
 
     @Override
     public void deleteUserLifeUpgradeActions(UUID userId, List<UUID> lifeUpgradeActions) {
-        System.out.println("ABOUT TO DELETE: " + lifeUpgradeActions);
         if (lifeUpgradeActions == null || lifeUpgradeActions.isEmpty()) {
             return;
         }
@@ -250,9 +251,9 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
 
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("userId", userId.toString());
-        params.addValue("lifeUpgradeActions", lifeUpgradeActions);
+        params.addValue("lifeUpgradeActions", toStringList(lifeUpgradeActions));
 
-        System.out.println("ROWS UPDATED: " + db.update(sql, params));
+        db.update(sql, params);
     }
 
     private static class LifeUpgradeActionRowMapper implements RowMapper<LifeUpgradeAction> {

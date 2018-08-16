@@ -83,6 +83,9 @@ public class DataSync {
         userFriendsRepository.modifyFriendsPermissions(userId, userSyncData.updated.userFriendPermissions);
         userNotesRepository.modifyNotes(userId, userSyncData.updated.userNotes);
 
+        System.out.println(userSyncData);
+        System.out.println(userSyncData.deleted);
+        System.out.println(userSyncData.deleted.lifeUpgradeActions);
         referenceRepository.deleteUserLifeUpgradeActions(userId, userSyncData.deleted.lifeUpgradeActions);
         userActionsRepository.deleteActionItems(userId, userSyncData.deleted.userActionItems);
         userActionsRepository.deleteActionsLogs(userId, userSyncData.deleted.userActionsLogs);

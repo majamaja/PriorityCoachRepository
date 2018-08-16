@@ -19,7 +19,7 @@ curl -H "Content-Type: application/json" -H "Authorization: $authToken" -d '{"up
 # 7322472d-b2f8-4e9e-a18e-254c36042734
 
 # Delete LifeUpgradeAction
-curl -H "Content-Type: application/json" -H "Authorization: $authToken" -d '{"deleted": ["lifeUpgradeActions": ["14df4e07-b6bf-4571-8eac-208bbb0e4433"]]}' "$baseUrl/v1/sync/user" | jq
+curl -H "Content-Type: application/json" -H "Authorization: $authToken" -d '{"deleted": {"lifeUpgradeActions": ["14df4e07-b6bf-4571-8eac-208bbb0e4433"]}}' "$baseUrl/v1/sync/user" | jq
 
 
 # accept invitation

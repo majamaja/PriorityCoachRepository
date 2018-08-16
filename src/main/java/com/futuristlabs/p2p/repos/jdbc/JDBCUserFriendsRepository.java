@@ -134,7 +134,7 @@ public class JDBCUserFriendsRepository extends JDBCRepository implements UserFri
 
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("userId", userId.toString());
-        params.addValue("ids", userFriendPermissions);
+        params.addValue("ids", toStringList(userFriendPermissions));
 
         db.update(sql, params);
     }

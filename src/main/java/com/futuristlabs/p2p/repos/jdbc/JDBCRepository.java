@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public abstract class JDBCRepository {
 
@@ -58,9 +59,13 @@ public abstract class JDBCRepository {
 
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("userId", userId.toString());
-        params.addValue("ids", ids);
+        params.addValue("ids", toStringList(ids));
 
         db.update(sql, params);
+    }
+
+    protected List<String> toStringList(final List<UUID> ids) {
+        return ids.stream().map(UUID::toString).collect(Collectors.toList());
     }
 
 }
