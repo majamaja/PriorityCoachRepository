@@ -3,7 +3,6 @@ package com.futuristlabs.p2p.func;
 import com.futuristlabs.p2p.emails.MailNotifier;
 import com.futuristlabs.p2p.func.auth.*;
 import com.futuristlabs.p2p.func.sync.UsersRepository;
-import com.futuristlabs.p2p.spring.TokenUtils;
 import org.junit.Test;
 import org.springframework.security.authentication.AuthenticationManager;
 
@@ -24,10 +23,9 @@ public class AuthenticationTest {
         final SessionUser sessionUser = new SessionUser();
 
         final UsersRepository userRepo = mock(UsersRepository.class);
-        final TokenUtils tokens = mock(TokenUtils.class);
         final MailNotifier mailNotifier = mock(MailNotifier.class);
         final AuthenticationManager authManager = mock(AuthenticationManager.class);
-        auth = new Authentication(userRepo, tokens, mailNotifier, authManager);
+        auth = new Authentication(userRepo, mailNotifier, authManager);
 
         when(userRepo.existsByEmail(anyString())).thenReturn(false);
         when(userRepo.createWithNative(any(AuthenticationRequest.class))).thenReturn(sessionUser);
@@ -44,7 +42,7 @@ public class AuthenticationTest {
         final UsersRepository userRepo = mock(UsersRepository.class);
         when(userRepo.existsByEmail(anyString())).thenReturn(true);
 
-        auth = new Authentication(userRepo, null, null, null);
+        auth = new Authentication(userRepo, null, null);
 
         assertNull(auth.register(new AuthenticationRequest()));
     }
@@ -53,11 +51,10 @@ public class AuthenticationTest {
     public void loginWithEmail() {
         final UUID userId = UUID.randomUUID();
 
-        final TokenUtils tokens = mock(TokenUtils.class);
         final UsersRepository userRepo = mock(UsersRepository.class);
         final MailNotifier mailNotifier = mock(MailNotifier.class);
         final AuthenticationManager authManager = mock(AuthenticationManager.class);
-        auth = new Authentication(userRepo, tokens, mailNotifier, authManager);
+        auth = new Authentication(userRepo, mailNotifier, authManager);
 
         when(userRepo.existsByEmail(anyString())).thenReturn(true);
         when(userRepo.findUserByCredentials(any(AuthenticationRequest.class))).thenReturn(new SessionUser(userId, "test@example.com"));
@@ -70,11 +67,10 @@ public class AuthenticationTest {
 
     @Test
     public void loginWithEmailWrongPass() {
-        final TokenUtils tokens = mock(TokenUtils.class);
         final UsersRepository userRepo = mock(UsersRepository.class);
         final MailNotifier mailNotifier = mock(MailNotifier.class);
         final AuthenticationManager authManager = mock(AuthenticationManager.class);
-        auth = new Authentication(userRepo, tokens, mailNotifier, authManager);
+        auth = new Authentication(userRepo, mailNotifier, authManager);
 
         when(userRepo.findUserByCredentials(any(AuthenticationRequest.class))).thenReturn(null);
 
@@ -90,11 +86,10 @@ public class AuthenticationTest {
         authenticationRequest.setFacebook(new FacebookLoginRequest("FB4212", "FB:Token:1241"));
         authenticationRequest.setEmail(USER_EMAIL);
 
-        final TokenUtils tokens = mock(TokenUtils.class);
         final UsersRepository userRepo = mock(UsersRepository.class);
         final MailNotifier mailNotifier = mock(MailNotifier.class);
         final AuthenticationManager authManager = mock(AuthenticationManager.class);
-        auth = new Authentication(userRepo, tokens, mailNotifier, authManager);
+        auth = new Authentication(userRepo, mailNotifier, authManager);
 
         when(userRepo.existsByEmail(anyString())).thenReturn(true);
         when(userRepo.findUserByFacebook(any(AuthenticationRequest.class))).thenReturn(sessionUser);
@@ -111,11 +106,10 @@ public class AuthenticationTest {
         authenticationRequest.setGplus(new GooglePLusLoginRequest("GPlus4212", "GPlus:Token:1241"));
         authenticationRequest.setEmail(USER_EMAIL);
 
-        final TokenUtils tokens = mock(TokenUtils.class);
         final UsersRepository userRepo = mock(UsersRepository.class);
         final MailNotifier mailNotifier = mock(MailNotifier.class);
         final AuthenticationManager authManager = mock(AuthenticationManager.class);
-        auth = new Authentication(userRepo, tokens, mailNotifier, authManager);
+        auth = new Authentication(userRepo, mailNotifier, authManager);
 
         when(userRepo.existsByEmail(anyString())).thenReturn(true);
         when(userRepo.findUserByGooglePlus(any(AuthenticationRequest.class))).thenReturn(sessionUser);

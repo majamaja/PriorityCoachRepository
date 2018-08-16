@@ -1,7 +1,6 @@
 package com.futuristlabs.p2p.spring;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.futuristlabs.func.exceptions.ApplicationException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
@@ -83,16 +81,6 @@ public class ExceptionHandlingConfig extends ResponseEntityExceptionHandler {
 
     private ErrorDescription resolveExceptionMessage(Exception exception) {
         return new ErrorDescription(exception.getMessage());
-    }
-
-    @ExceptionHandler({ ApplicationException.class })
-    protected ResponseEntity<Object> handleApplicationExceptions(ApplicationException ex, WebRequest request) {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpStatus status = resolveAnnotatedResponseStatus(ex);
-        ErrorDescription message = resolveExceptionMessage(ex);
-        return new ResponseEntity<>(message, headers, status);
     }
 
     @ExceptionHandler({ EmptyResultDataAccessException.class, NoSuchElementException.class })

@@ -1,6 +1,6 @@
 package com.futuristlabs.p2p.spring;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +14,6 @@ public class WebMvcConfig extends WebMvcAutoConfiguration {
     @Primary
     @Bean
     public ObjectMapper objectMapper() {
-        return new NewCustomObjectMapper();
+        return new CustomObjectMapper();
     }
 }

@@ -2,7 +2,6 @@ package com.futuristlabs.p2p.func.auth;
 
 import com.futuristlabs.p2p.emails.MailNotifier;
 import com.futuristlabs.p2p.func.sync.UsersRepository;
-import com.futuristlabs.p2p.spring.TokenUtils;
 import com.futuristlabs.p2p.utils.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,14 +18,12 @@ import java.util.Collection;
 public class Authentication {
 
     private UsersRepository usersRepository;
-    private TokenUtils tokenUtils;
     private MailNotifier mailNotifier;
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    public Authentication(UsersRepository usersRepository, TokenUtils tokenUtils, MailNotifier mailNotifier, AuthenticationManager authenticationManager) {
+    public Authentication(UsersRepository usersRepository, MailNotifier mailNotifier, AuthenticationManager authenticationManager) {
         this.usersRepository = usersRepository;
-        this.tokenUtils = tokenUtils;
         this.mailNotifier = mailNotifier;
         this.authenticationManager = authenticationManager;
     }
