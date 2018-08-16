@@ -25,8 +25,7 @@ public class ReferenceRepositoryTest extends RepositoryTest {
 
     @Test
     public void modifiedLifeUpgradeCategoriesNoDate() {
-        final List<LifeUpgradeCategory> categories = repo.modifiedLifeUpgradeCategories(null);
-        assertTrue(categories.isEmpty());
+        repo.modifiedLifeUpgradeCategories(null);
     }
 
     @Test

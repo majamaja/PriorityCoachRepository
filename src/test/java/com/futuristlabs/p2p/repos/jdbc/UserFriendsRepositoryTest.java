@@ -41,8 +41,7 @@ public class UserFriendsRepositoryTest extends RepositoryTest {
 
     @Test
     public void modifiedFriendsPermissionsNoDate() {
-        final List<UserFriendPermission> categories = repo.modifiedFriendsPermissions(UUID.randomUUID(), null);
-        assertTrue(categories.isEmpty());
+        repo.modifiedFriendsPermissions(UUID.randomUUID(), null);
     }
 
     @Test
