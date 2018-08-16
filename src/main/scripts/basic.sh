@@ -1,7 +1,7 @@
 #!/bin/bash
 
 baseUrl="http://127.0.0.1:8080"
-baseUrl="https://priority-coach-dev.git.herokuapp.com/"
+baseUrl="https://priority-coach-dev.herokuapp.com/"
 
 # reference data
 curl "$baseUrl/v1/sync/reference" | jq
