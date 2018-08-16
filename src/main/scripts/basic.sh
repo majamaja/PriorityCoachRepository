@@ -1,8 +1,7 @@
 #!/bin/bash
 
-baseUrl="http://127.0.0.1:8888"
-baseUrl="http://passport2power-1.appspot.com/"
-
+baseUrl="http://127.0.0.1:8080"
+baseUrl="https://priority-coach-dev.git.herokuapp.com/"
 
 # reference data
 curl "$baseUrl/v1/sync/reference" | jq
