@@ -6,6 +6,7 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.util.Base64;
 import java.util.UUID;
 
 public class Utils {
@@ -34,5 +35,9 @@ public class Utils {
 
     public static String toString(LocalDate date) {
         return toString(date.toDateTime(new LocalTime(0, 0)));
+    }
+
+    public static String base64decode(final String str) {
+        return new String(Base64.getDecoder().decode(str));
     }
 }

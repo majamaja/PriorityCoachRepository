@@ -1,11 +1,15 @@
 package com.futuristlabs.p2p.rest.v1;
 
+import com.futuristlabs.func.users.UserSession;
+import com.futuristlabs.p2p.func.auth.SessionUser;
 import com.futuristlabs.p2p.func.sync.DataSync;
 import com.futuristlabs.p2p.func.sync.ReferenceSyncData;
 import com.futuristlabs.p2p.func.sync.UserSyncData;
 import com.futuristlabs.p2p.utils.Utils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,19 +42,19 @@ public class SyncController {
     @ResponseBody
     public UserSyncData syncUserData(
             @RequestHeader(value = "If-Modified-Since", required = false) String modifiedSinceStr,
-            @RequestParam(value = "userId") UUID userId
+            @AuthenticationPrincipal SessionUser user
     ) {
         final DateTime modifiedSince = Utils.parseDate(modifiedSinceStr);
-        return dataSync.getUserData(modifiedSince, userId);
+        return dataSync.getUserData(modifiedSince, user.getId());
     }
 
     @RequestMapping(value = "/user", method = POST)
     @ResponseBody
     public UserSyncData updateData(
-            @RequestParam(value = "userId") UUID userId,
+            @AuthenticationPrincipal SessionUser user,
             @RequestBody UserSyncData userSyncData
     ) {
-        dataSync.updateUserData(userSyncData, userId);
+        dataSync.updateUserData(userSyncData, user.getId());
         return userSyncData;
     }
 

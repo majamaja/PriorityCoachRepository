@@ -77,4 +77,12 @@ public class SessionUser implements UserDetails {
     public UUID getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "SessionUser{" +
+               "id=" + id +
+               ", username='" + username + '\'' +
+               '}';
+    }
 }

@@ -14,8 +14,8 @@ import javax.sql.DataSource;
 @EnableWebMvc
 public class JdbcConfig {
     private static final String JDBC_DATABASE_URL = "JDBC_DATABASE_URL";
-//    private static final String HEROKU_DATABASE_URL = "jdbc:mysql://eu-cdbr-west-02.cleardb.net/heroku_d738c6211c1565c?user=b1daec79145de9&password=ea770cf0";
-    private static final String HEROKU_DATABASE_URL = "jdbc:mysql://localhost/p2p?user=p2p&password=p2p&useSSL=false";
+    private static final String HEROKU_DATABASE_URL = "jdbc:mysql://eu-cdbr-west-02.cleardb.net/heroku_d738c6211c1565c?user=b1daec79145de9&password=ea770cf0";
+//    private static final String HEROKU_DATABASE_URL = "jdbc:mysql://localhost/p2p?user=p2p&password=p2p&useSSL=false";
 
     private DataSource dataSource;
 

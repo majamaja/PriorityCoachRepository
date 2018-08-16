@@ -1,9 +1,11 @@
 package com.futuristlabs.p2p.spring;
 
+import com.futuristlabs.p2p.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -14,9 +16,10 @@ import org.springframework.session.ExpiringSession;
 import org.springframework.session.MapSessionRepository;
 import org.springframework.session.SessionRepository;
 import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
+import org.springframework.session.web.http.HeaderHttpSessionStrategy;
 import org.springframework.session.web.http.HttpSessionStrategy;
 
-import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpMethod.OPTIONS;
 
 @Configuration
 @EnableWebSecurity
@@ -25,18 +28,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final int MONTH = 60 * 60 * 24 * 30;
 
-//    @Autowired
-//    private UserDetailsService userDetailsService;
-
-    /*
-    <sec:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless"
-              entry-point-ref="customAuthenticationEntryPoint">
-        <sec:custom-filter ref="authenticationTokenProcessingFilter" position="BASIC_AUTH_FILTER"/>
-    </sec:http>
-     */
-
     @Autowired
     private AuthenticationEntryPoint authenticationEntryPoint;
+
+    @Bean
+    public HttpSessionStrategy httpSessionStrategy() {
+        final HeaderHttpSessionStrategy sessionStrategy = new HeaderHttpSessionStrategy();
+        sessionStrategy.setHeaderName("Authorization");
+        return sessionStrategy;
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() {
+        return authentication -> {
+            if (!authentication.isAuthenticated()) {
+                throw new BadCredentialsException("User cannot be authneticated");
+            }
+
+            return authentication;
+        };
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -64,33 +76,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .regexMatchers("/.*").authenticated();
     }
 
-//    @Autowired
-//    public void configurationGlobal(final AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService).passwordEncoder(new PasswordEncoder() {
-//            @Override
-//            public String encode(CharSequence rawPassword) {
-//                return encodePassword(rawPassword);
-//            }
-//
-//            @Override
-//            public boolean matches(CharSequence rawPassword, String encodedPassword) {
-//                String passToCompare = encodePassword(rawPassword);
-//                return passToCompare.equals(encodedPassword);
-//            }
-//        });
-//    }
-
-    @Bean
-    public HttpSessionStrategy httpSessionStrategy() {
-        return new RequestOrHeaderHttpSessionStrategyAdapter();
-    }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
     @Bean
     public AuthenticationPrincipalArgumentResolver authenticationPrincipalArgumentResolver() {
         return new AuthenticationPrincipalArgumentResolver();
@@ -98,8 +83,39 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public SessionRepository<ExpiringSession> sessionRepository() {
-        MapSessionRepository repository = new MapSessionRepository();
+        final MapSessionRepository repository = new MapSessionRepository();
         repository.setDefaultMaxInactiveInterval(MONTH);
-        return repository;
+
+        return new Base64SessionRepository(repository);
+    }
+
+    public static class Base64SessionRepository implements SessionRepository<ExpiringSession> {
+        private final SessionRepository<ExpiringSession> wrapped;
+
+        public Base64SessionRepository(final SessionRepository<ExpiringSession> repository) {
+            this.wrapped = repository;
+        }
+
+        @Override
+        public ExpiringSession createSession() {
+            return wrapped.createSession();
+        }
+
+        @Override
+        public void save(final ExpiringSession session) {
+            wrapped.save(session);
+        }
+
+        @Override
+        public ExpiringSession getSession(final String id) {
+            final String decodedSessionId = Utils.base64decode(id).trim();
+            return wrapped.getSession(decodedSessionId);
+        }
+
+        @Override
+        public void delete(final String id) {
+            final String decodedSessionId = Utils.base64decode(id).trim();
+            wrapped.delete(decodedSessionId);
+        }
     }
 }

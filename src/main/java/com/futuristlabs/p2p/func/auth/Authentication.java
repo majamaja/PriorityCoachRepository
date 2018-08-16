@@ -5,22 +5,33 @@ import com.futuristlabs.p2p.func.sync.UsersRepository;
 import com.futuristlabs.p2p.spring.TokenUtils;
 import com.futuristlabs.p2p.utils.Security;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 @Component
 public class Authentication {
+
     private UsersRepository usersRepository;
     private TokenUtils tokenUtils;
     private MailNotifier mailNotifier;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
-    public Authentication(UsersRepository usersRepository, TokenUtils tokenUtils, MailNotifier mailNotifier) {
+    public Authentication(UsersRepository usersRepository, TokenUtils tokenUtils, MailNotifier mailNotifier, AuthenticationManager authenticationManager) {
         this.usersRepository = usersRepository;
         this.tokenUtils = tokenUtils;
         this.mailNotifier = mailNotifier;
+        this.authenticationManager = authenticationManager;
     }
 
-    public UserSession register(AuthenticationRequest authenticationRequest) {
+    public SessionUser register(AuthenticationRequest authenticationRequest) {
         if (authenticationRequest.getName() == null) {
             authenticationRequest.setName(authenticationRequest.getEmail());
         }
@@ -34,31 +45,27 @@ public class Authentication {
         }
 
         final SessionUser user = usersRepository.createWithNative(authenticationRequest);
-        final String token = tokenUtils.getToken(new SessionUser(user.getId(), user.getUsername()));
-
         usersRepository.registerUserDevice(user.getId(), authenticationRequest.getDevice());
 
-        final UserSession userSession = new UserSession();
-        userSession.setUserId(user.getId());
-        userSession.setAccessToken(token);
-        return userSession;
+        return user;
     }
 
-    public UserSession login(AuthenticationRequest authenticationRequest) {
+    public SessionUser login(AuthenticationRequest authenticationRequest) {
         final SessionUser user = findOrCreateUser(authenticationRequest);
 
+        // User not authenticated
         if (user == null) {
             return null;
         }
 
-        final String token = tokenUtils.getToken(user);
-
         usersRepository.registerUserDevice(user.getId(), authenticationRequest.getDevice());
 
-        final UserSession userSession = new UserSession();
-        userSession.setUserId(user.getId());
-        userSession.setAccessToken(token);
-        return userSession;
+        // Generate session
+        final org.springframework.security.core.Authentication auth = authenticationManager.authenticate(new SpringUser(user));
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(auth);
+
+        return user;
     }
 
     private SessionUser findOrCreateUser(AuthenticationRequest authenticationRequest) {
@@ -114,5 +121,51 @@ public class Authentication {
         usersRepository.updatePassword(email, newPassword);
         mailNotifier.sendNewPasswordEmail(email, newPassword);
         return true;
+    }
+
+    public static class SpringUser implements org.springframework.security.core.Authentication {
+
+        private SessionUser user;
+
+        public SpringUser(final SessionUser user) {
+            this.user = user;
+        }
+
+        @Override
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+
+        @Override
+        public Object getCredentials() {
+            return user;
+        }
+
+        @Override
+        public Object getDetails() {
+            return user;
+        }
+
+        @Override
+        public Object getPrincipal() {
+            return user;
+        }
+
+        @Override
+        public boolean isAuthenticated() {
+            return user != null;
+        }
+
+        @Override
+        public void setAuthenticated(final boolean isAuthenticated) throws IllegalArgumentException {
+            if (!isAuthenticated) {
+                user = null;
+            }
+        }
+
+        @Override
+        public String getName() {
+            return user.getUsername();
+        }
     }
 }
