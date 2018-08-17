@@ -108,14 +108,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         @Override
         public ExpiringSession getSession(final String id) {
-            final String decodedSessionId = Utils.base64decode(id).trim();
-            return wrapped.getSession(decodedSessionId);
+            return wrapped.getSession(decodeSessionId(id));
         }
 
         @Override
         public void delete(final String id) {
-            final String decodedSessionId = Utils.base64decode(id).trim();
-            wrapped.delete(decodedSessionId);
+            wrapped.delete(decodeSessionId(id));
+        }
+
+        private String decodeSessionId(final String id) {
+            final String token = id.replace("Basic: ", "");
+            return Utils.base64decode(token).trim();
         }
     }
 }
