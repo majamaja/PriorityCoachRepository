@@ -122,13 +122,22 @@ public class UserActionsRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void deleteActionItems() {
+    public void deleteActionItems_nonexinsting() {
         repo.deleteActionItems(UUID.randomUUID(), Arrays.asList(UUID.randomUUID()));
+    }
+    @Test
+    public void deleteActionItems_exinsting() {
+        final UUID user = sampleData.user();
+        final UUID actionItem = sampleData.userActionItem(user);
+
+        repo.deleteActionItems(user, Arrays.asList(actionItem));
+
+        assertTrue(repo.deletedActionItems(user, DateTime.now().minusMinutes(1)).contains(actionItem));
     }
 
     @Test
-    public void deleteActionItemsNoData() {
-        repo.deleteActionItems(UUID.randomUUID(), new ArrayList<UUID>());
+    public void deleteActionItems_noData() {
+        repo.deleteActionItems(UUID.randomUUID(), new ArrayList<>());
     }
 
     @Test

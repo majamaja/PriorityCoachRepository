@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ReferenceRepositoryTest extends RepositoryTest {
@@ -161,14 +162,24 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void deleteLifeUpgradeCategory() {
+    public void deleteLifeUpgradeCategory_nonexisting() {
         repo.deleteLifeUpgradeCategory(UUID.randomUUID());
     }
 
     @Test
-    public void deleteLifeUpgradeCategoryWithNULL() {
+    public void deleteLifeUpgradeCategory_existing() {
+        final UUID category = sampleData.lifeUpgradeCategory();
+
+        repo.deleteLifeUpgradeCategory(category);
+
+        assertTrue(repo.deletedLifeUpgradeCategories(DateTime.now().minusMinutes(1)).contains(category));
+    }
+
+    @Test
+    public void deleteLifeUpgradeCategory_null() {
         repo.deleteLifeUpgradeCategory(null);
     }
+
 
     @Test
     public void modifiedLifeUpgradeActionsForCategory() {
