@@ -2,17 +2,21 @@ package com.futuristlabs.p2p.rest.v1;
 
 
 import com.futuristlabs.p2p.func.auth.*;
+import com.futuristlabs.p2p.func.sync.UserSyncData;
+import com.futuristlabs.p2p.func.userprofile.UserProfile;
+import com.futuristlabs.p2p.func.userprofile.UserProfiles;
 import com.futuristlabs.p2p.rest.common.RestException;
+import com.futuristlabs.p2p.utils.Utils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
@@ -20,10 +24,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class LoginController {
 
     private Authentication auth;
+    private UserProfiles userProfiles;
 
     @Autowired
-    public LoginController(Authentication auth) {
+    public LoginController(final Authentication auth, final UserProfiles userProfiles) {
         this.auth = auth;
+        this.userProfiles = userProfiles;
     }
 
     @RequestMapping(value = "/register", method = POST)
@@ -62,6 +68,19 @@ public class LoginController {
         if (!auth.resetPassword(resetPasswordRequest)) {
             throw new RestException(HttpStatus.BAD_REQUEST, "INVALID_EMAIL");
         }
+    }
+
+    @RequestMapping(value = "/user/profile", method = GET)
+    @ResponseBody
+    public UserProfile fetchUserProfile(@AuthenticationPrincipal SessionUser user) {
+        return userProfiles.read(user);
+    }
+
+    @RequestMapping(value = "/user/profile", method = POST)
+    @ResponseBody
+    public UserProfile updateUserProfile(@AuthenticationPrincipal SessionUser user, @RequestBody UserProfile userProfile) {
+        userProfile.setId(user.getId());
+        return userProfiles.update(userProfile);
     }
 
 }

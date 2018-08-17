@@ -9,9 +9,10 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -31,7 +32,7 @@ public class SyncController {
     @ResponseBody
     public ReferenceSyncData syncReferenceData(
             @RequestHeader(value = "If-Modified-Since", required = false) String modifiedSinceStr
-    ) {
+                                              ) {
         final DateTime modifiedSince = Utils.parseDate(modifiedSinceStr);
         return dataSync.getReferenceData(modifiedSince);
     }
@@ -41,7 +42,7 @@ public class SyncController {
     public UserSyncData syncUserData(
             @RequestHeader(value = "If-Modified-Since", required = false) String modifiedSinceStr,
             @AuthenticationPrincipal SessionUser user
-    ) {
+                                    ) {
         final DateTime modifiedSince = Utils.parseDate(modifiedSinceStr);
         return dataSync.getUserData(modifiedSince, user.getId());
     }
@@ -51,7 +52,7 @@ public class SyncController {
     public UserSyncData updateData(
             @AuthenticationPrincipal SessionUser user,
             @RequestBody UserSyncData userSyncData
-    ) {
+                                  ) {
         dataSync.updateUserData(userSyncData, user.getId());
         return userSyncData;
     }

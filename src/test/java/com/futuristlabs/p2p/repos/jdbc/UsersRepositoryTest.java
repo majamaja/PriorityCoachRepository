@@ -2,9 +2,12 @@ package com.futuristlabs.p2p.repos.jdbc;
 
 import com.futuristlabs.p2p.func.auth.*;
 import com.futuristlabs.p2p.func.sync.UsersRepository;
+import com.futuristlabs.p2p.func.userprofile.UserProfile;
 import com.futuristlabs.p2p.repos.RepositoryTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 
@@ -133,4 +136,45 @@ public class UsersRepositoryTest extends RepositoryTest {
     public void changePassword() {
         repo.updatePassword("test@example.com", "Secret");
     }
+
+    @Test
+    public void findProfileById_nonExisting() {
+        assertNull(repo.findProfileById(UUID.randomUUID()));
+    }
+
+    @Test
+    public void findProfileById_Existing() {
+        final UUID user = sampleData.user();
+        assertNotNull(repo.findProfileById(user));
+    }
+
+    @Test
+    public void updateProfile_NonExistingUser() {
+        final UUID userId = UUID.randomUUID();
+
+        final UserProfile userProfile = new UserProfile();
+        userProfile.setId(userId);
+        userProfile.setEmail("test@test.com");
+        userProfile.setName("Test Test");
+
+        repo.updateProfile(userProfile);
+        assertNull(repo.findProfileById(userId));
+    }
+
+    @Test
+    public void updateProfile_ExistingUser() {
+        final UUID userId = sampleData.user();
+
+        final UserProfile userProfile = new UserProfile();
+        userProfile.setId(userId);
+        userProfile.setEmail(userId + "@existing_user_test.com");
+        userProfile.setName("User " + userId);
+
+        repo.updateProfile(userProfile);
+
+        final UserProfile updatedProfile = repo.findProfileById(userId);
+        assertEquals(updatedProfile, userProfile);
+
+    }
+
 }

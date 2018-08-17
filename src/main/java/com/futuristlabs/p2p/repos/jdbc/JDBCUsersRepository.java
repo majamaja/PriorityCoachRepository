@@ -5,7 +5,9 @@ import com.futuristlabs.p2p.func.auth.AuthenticationRequest;
 import com.futuristlabs.p2p.func.auth.Device;
 import com.futuristlabs.p2p.func.auth.SessionUser;
 import com.futuristlabs.p2p.func.sync.UsersRepository;
+import com.futuristlabs.p2p.func.userprofile.UserProfile;
 import com.futuristlabs.p2p.utils.Utils;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -84,7 +86,7 @@ public class JDBCUsersRepository extends JDBCRepository implements UsersReposito
         final String password = authenticationRequest.getPassword();
 
         createNativeUser(id, email, password);
-        createUser(id, name, email, null, id, null, null);
+        createUser(id, name, email, id, null, null);
         return new SessionUser(id, email);
     }
 
@@ -106,7 +108,7 @@ public class JDBCUsersRepository extends JDBCRepository implements UsersReposito
         params.addValue("fbToken", authenticationRequest.getFacebook().getTokenId());
 
         db.insert(sql, params);
-        createUser(id, name, email, null, null, id, null);
+        createUser(id, name, email, null, id, null);
         return new SessionUser(id, email);
     }
 
@@ -128,7 +130,7 @@ public class JDBCUsersRepository extends JDBCRepository implements UsersReposito
         params.addValue("gplusToken", authenticationRequest.getGplus().getTokenId());
 
         db.insert(sql, params);
-        createUser(id, name, email, null, null, null, id);
+        createUser(id, name, email, null, null, id);
         return new SessionUser(id, email);
     }
 
@@ -168,14 +170,50 @@ public class JDBCUsersRepository extends JDBCRepository implements UsersReposito
         db.update(sql, params);
     }
 
-    private void createUser(UUID id, String name, String email, String phone, UUID nativeUserId, UUID facebookUserId, UUID gplusUserId) {
-        final String sql = "INSERT INTO users (id, name, email, phone, native_user_id, facebook_user_id, gplus_user_id) VALUES (:id, :name, :email, :phone, :nativeUserId, :facebookUserId, :gplusUserId)";
+    @Override
+    public UserProfile findProfileById(final UUID userId) {
+        final String sql = "SELECT id, name, email FROM users WHERE id = :userId";
+
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("userId", userId.toString());
+
+        return db.returnSafe(sql, params, new BeanPropertyRowMapper<>(UserProfile.class));
+    }
+
+    @Override
+    public void updateProfile(final UserProfile userProfile) {
+        updateBaseUserProfile(userProfile);
+        updateNativeUserProfile(userProfile);
+    }
+
+    private void updateBaseUserProfile(final UserProfile userProfile) {
+        final String sql = "UPDATE users SET name = :name, email = :email WHERE id = :userId";
+
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("userId", userProfile.getId().toString());
+        params.addValue("email", userProfile.getEmail());
+        params.addValue("name", userProfile.getName());
+
+        db.update(sql, params);
+    }
+
+    private void updateNativeUserProfile(final UserProfile userProfile) {
+        final String sql = "UPDATE native_users SET email = :email WHERE id = :userId";
+
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("userId", userProfile.getId().toString());
+        params.addValue("email", userProfile.getEmail());
+
+        db.update(sql, params);
+    }
+
+    private void createUser(UUID id, String name, String email, UUID nativeUserId, UUID facebookUserId, UUID gplusUserId) {
+        final String sql = "INSERT INTO users (id, name, email, native_user_id, facebook_user_id, gplus_user_id) VALUES (:id, :name, :email, :nativeUserId, :facebookUserId, :gplusUserId)";
 
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", id.toString());
         params.addValue("name", name);
         params.addValue("email", email);
-        params.addValue("phone", phone);
 
         params.addValue("nativeUserId", Utils.toString(nativeUserId));
         params.addValue("facebookUserId", Utils.toString(facebookUserId));
