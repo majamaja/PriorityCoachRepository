@@ -1,7 +1,5 @@
 package com.futuristlabs.p2p.repos.jdbc;
 
-import com.futuristlabs.p2p.func.useractions.UserActionItem;
-import com.futuristlabs.p2p.func.useractions.UserActionItemFrequency;
 import com.futuristlabs.p2p.func.useractions.UserActionsLog;
 import com.futuristlabs.p2p.func.useractions.UserActionsRepository;
 import com.futuristlabs.p2p.repos.RepositoryTest;
@@ -20,30 +18,6 @@ public class UserActionsRepositoryTest extends RepositoryTest {
 
     @Autowired
     private UserActionsRepository repo;
-
-    @Test
-    public void modifiedActionItems() {
-        final List<UserActionItem> categories = repo.modifiedActionItems(UUID.randomUUID(), new DateTime());
-        assertTrue(categories.isEmpty());
-    }
-
-    @Test
-    public void modifiedActionItemsNoDate() {
-        final List<UserActionItem> categories = repo.modifiedActionItems(UUID.randomUUID(), null);
-        assertTrue(categories.isEmpty());
-    }
-
-    @Test
-    public void deletedActionItems() {
-        final List<UUID> uuids = repo.deletedActionItems(UUID.randomUUID(), new DateTime());
-        assertTrue(uuids.isEmpty());
-    }
-
-    @Test
-    public void deletedActionItemsNoDate() {
-        final List<UUID> uuids = repo.deletedActionItems(UUID.randomUUID(), null);
-        assertTrue(uuids.isEmpty());
-    }
 
     @Test
     public void modifiedActionsLogs() {
@@ -70,79 +44,20 @@ public class UserActionsRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void modifyActionItems() {
-        final UUID userId = sampleData.user();
-        final UUID lifeUpgradeActionId = sampleData.lifeUpgradeAction();
-
-        final UserActionItem userActionItem = new UserActionItem();
-        userActionItem.setId(UUID.randomUUID());
-        userActionItem.setUserId(userId);
-        userActionItem.setActionId(lifeUpgradeActionId);
-        userActionItem.setTimesPerDay(2);
-        userActionItem.setFrequency(UserActionItemFrequency.DAILY);
-        userActionItem.setDayOfWeekMon(true);
-        userActionItem.setEveryXDay(2);
-        userActionItem.setStartDateAsDate(new DateTime());
-
-        repo.modifyActionItems(userId, Arrays.asList(userActionItem));
-
-        userActionItem.setTimesPerDay(1);
-        userActionItem.setFrequency(UserActionItemFrequency.DAILY);
-        userActionItem.setDayOfWeekMon(false);
-        userActionItem.setDayOfWeekThr(true);
-        userActionItem.setEveryXDay(2);
-        repo.modifyActionItems(userId, Arrays.asList(userActionItem));
-    }
-
-    @Test
-    public void modifyActionItemsNoData() {
-        repo.modifyActionItems(UUID.randomUUID(), new ArrayList<UserActionItem>());
-    }
-
-    @Test
-    public void modifyActionItemsNoDataNull() {
-        repo.modifyActionItems(UUID.randomUUID(), null);
-    }
-
-    @Test
     public void modifyActionsLogs() {
         final UUID userId = sampleData.user();
-        final UUID userActionItemId = sampleData.userActionItem(userId);
+        final UUID lifeUpgradeAction = sampleData.lifeUpgradeActionWithUser(userId);
 
         final UserActionsLog userActionsLog = new UserActionsLog();
         userActionsLog.setId(UUID.randomUUID());
         userActionsLog.setActionDateAsDate(new DateTime());
         userActionsLog.setTimesDone(3);
-        userActionsLog.setUserActionItemId(userActionItemId);
+        userActionsLog.setLifeUpgradeActionId(lifeUpgradeAction);
 
         repo.modifyActionsLogs(userId, Arrays.asList(userActionsLog));
 
         userActionsLog.setTimesDone(userActionsLog.getTimesDone() + 1);
         repo.modifyActionsLogs(userId, Arrays.asList(userActionsLog));
-    }
-
-    @Test
-    public void deleteActionItems_nonexinsting() {
-        repo.deleteActionItems(UUID.randomUUID(), Arrays.asList(UUID.randomUUID()));
-    }
-    @Test
-    public void deleteActionItems_exinsting() {
-        final UUID user = sampleData.user();
-        final UUID actionItem = sampleData.userActionItem(user);
-
-        repo.deleteActionItems(user, Arrays.asList(actionItem));
-
-        assertTrue(repo.deletedActionItems(user, DateTime.now().minusMinutes(1)).contains(actionItem));
-    }
-
-    @Test
-    public void deleteActionItems_noData() {
-        repo.deleteActionItems(UUID.randomUUID(), new ArrayList<>());
-    }
-
-    @Test
-    public void deleteActionItemsNoDataNull() {
-        repo.deleteActionItems(UUID.randomUUID(), null);
     }
 
     @Test

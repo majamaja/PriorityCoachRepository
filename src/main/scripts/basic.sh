@@ -14,7 +14,7 @@ echo "authToken=$authToken"
 curl -H "Authorization: $authToken" "$baseUrl/v1/sync/user" | jq
 
 # Create LifeUpgradeAction
-curl -H "Content-Type: application/json" -H "Authorization: $authToken" -d '{"updated":{"lifeUpgradeActions":[{"id": "14df4e07-b6bf-4571-8eac-208bbb0e4433", "name": "My Test Action 2", "lifeUpgradeCategoryId": "7322472d-b2f8-4e9e-a18e-254c36042734", "custom": true}]}}' "$baseUrl/v1/sync/user"
+curl -H "Content-Type: application/json" -H "Authorization: $authToken" -d '{"updated":{"lifeUpgradeActions":[{"id": "14df4e07-b6bf-4571-8eac-208bbb0e4433", "name": "My Test Action 2", "lifeUpgradeCategoryId": "7322472d-b2f8-4e9e-a18e-254c36042734", "timesPerWeek": 3}]}}' "$baseUrl/v1/sync/user"
 # life_upgrade_category_id
 # 7322472d-b2f8-4e9e-a18e-254c36042734
 

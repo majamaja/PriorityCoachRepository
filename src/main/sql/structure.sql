@@ -64,8 +64,8 @@ CREATE TABLE life_upgrade_actions (
   id                        CHAR(36) PRIMARY KEY,
   life_upgrade_category_id  CHAR(36) NOT NULL,
   name                      VARCHAR(255),
-  is_custom                 BOOL,
-  user_id                   CHAR(36),
+  user_id                   CHAR(36) NOT NULL,
+  times_per_week            INT NOT NULL CHECK (timesPerWeek > 0),
   last_modified             TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   is_deleted                BOOL NOT NULL DEFAULT false,
 
@@ -74,35 +74,10 @@ CREATE TABLE life_upgrade_actions (
 ) engine = InnoDB;
 
 
--- why not call this user_action_config or user_action_info instead
-CREATE TABLE user_action_items (
-  id                        CHAR(36) PRIMARY KEY,
-  user_id                   CHAR(36) REFERENCES users(id),
-  frequency                 VARCHAR(16) CHECK(frequency IN ('weekly','daily')),
-  times_per_day             INT NOT NULL DEFAULT 1,
-  action_id                 CHAR(36) NOT NULL,
-  start_date                TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  every_x_day               INT,
-  day_of_week_mon           BOOL,
-  day_of_week_tue           BOOL,
-  day_of_week_wed           BOOL,
-  day_of_week_thr           BOOL,
-  day_of_week_fri           BOOL,
-  day_of_week_sat           BOOL,
-  day_of_week_sun           BOOL,
-  last_modified             TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  is_deleted                BOOL NOT NULL DEFAULT false,
-
-  CONSTRAINT user_action_items_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id),
-  CONSTRAINT user_action_items_action_id_fk FOREIGN KEY (action_id) REFERENCES life_upgrade_actions(id)
-) engine = InnoDB;
--- NOTE: I don’t like the part with the 7 days of the week, but it will be easiest way to query.
-
-
 CREATE TABLE user_actions_log (
   id                        CHAR(36) PRIMARY KEY,
   user_id                   CHAR(36),
-  user_action_item_id       CHAR(36) NOT NULL,
+  life_upgrade_action_id    CHAR(36) NOT NULL,
   action_date               TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   status                    VARCHAR(32) DEFAULT 'done',
   times_done                INT DEFAULT 1 CHECK (times_done >= 0),
@@ -110,7 +85,7 @@ CREATE TABLE user_actions_log (
   is_deleted                BOOL NOT NULL DEFAULT false,
 
   CONSTRAINT user_actions_log_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id),
-  CONSTRAINT user_actions_log_user_action_item_id_fk FOREIGN KEY (user_action_item_id) REFERENCES user_action_items(id)
+  CONSTRAINT user_actions_log_life_upgrade_action_id_fk FOREIGN KEY (life_upgrade_action_id) REFERENCES life_upgrade_actions(id)
 ) engine = InnoDB;
 
 

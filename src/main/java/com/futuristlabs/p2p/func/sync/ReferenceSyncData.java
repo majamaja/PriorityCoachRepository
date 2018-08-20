@@ -1,6 +1,5 @@
 package com.futuristlabs.p2p.func.sync;
 
-import com.futuristlabs.p2p.func.lifeupgrade.LifeUpgradeAction;
 import com.futuristlabs.p2p.func.lifeupgrade.LifeUpgradeCategory;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -17,21 +16,19 @@ public class ReferenceSyncData {
         return updated.isEmpty() && deleted.isEmpty();
     }
 
-    public static abstract class AbstractReferenceSyncData<LIFE_UPGRADE_CATEGORIES, LIFE_UPGRADE_ACTIONS> {
+    public static abstract class AbstractReferenceSyncData<LIFE_UPGRADE_CATEGORIES> {
         public List<LIFE_UPGRADE_CATEGORIES> lifeUpgradeCategories;
-        public List<LIFE_UPGRADE_ACTIONS> lifeUpgradeActions;
 
         public boolean isEmpty() {
-            return (lifeUpgradeCategories == null || lifeUpgradeCategories.isEmpty()) &&
-                    (lifeUpgradeActions == null || lifeUpgradeActions.isEmpty());
+            return (lifeUpgradeCategories == null || lifeUpgradeCategories.isEmpty());
         }
     }
 
-    public static class UpdatedReferenceSyncData extends AbstractReferenceSyncData<LifeUpgradeCategory, LifeUpgradeAction> {
+    public static class UpdatedReferenceSyncData extends AbstractReferenceSyncData<LifeUpgradeCategory> {
 
     }
 
-    public static class DeletedReferenceSyncData extends AbstractReferenceSyncData<UUID, UUID> {
+    public static class DeletedReferenceSyncData extends AbstractReferenceSyncData<UUID> {
 
     }
 

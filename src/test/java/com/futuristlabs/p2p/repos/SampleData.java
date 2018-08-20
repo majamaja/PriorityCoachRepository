@@ -1,6 +1,5 @@
 package com.futuristlabs.p2p.repos;
 
-import com.futuristlabs.p2p.func.useractions.UserActionItemFrequency;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -46,28 +45,23 @@ public class SampleData {
 
     public UUID lifeUpgradeCategory() {
         UUID categoryId = UUID.randomUUID();
-        insert("INSERT INTO life_upgrade_categories (id, name) VALUES (:1, :2)", categoryId, "Upgrade Categoty " + categoryId);;
+        insert("INSERT INTO life_upgrade_categories (id, name) VALUES (:1, :2)", categoryId, "Upgrade Categoty " + categoryId);
         return categoryId;
     }
 
     public UUID lifeUpgradeAction() {
-        return lifeUpgradeAction(lifeUpgradeCategory());
+        return lifeUpgradeAction(user(), lifeUpgradeCategory());
     }
 
-    public UUID lifeUpgradeAction(UUID lifeUpgradeCategoryId) {
+    public UUID lifeUpgradeActionWithUser(UUID userId) {
+        return lifeUpgradeAction(userId, lifeUpgradeCategory());
+    }
+
+    public UUID lifeUpgradeAction(UUID userId, UUID lifeUpgradeCategoryId) {
         UUID actionId = UUID.randomUUID();
-        insert("INSERT INTO life_upgrade_actions (id, life_upgrade_category_id, name, is_custom, user_id) VALUES (:1, :2, :3, :4, :5)", actionId, lifeUpgradeCategoryId, "Upgrade Action " + actionId, false, null);;
+        insert("INSERT INTO life_upgrade_actions (id, life_upgrade_category_id, name, times_per_week, user_id) VALUES (:1, :2, :3, :4, :5)", actionId, lifeUpgradeCategoryId, "Upgrade Action " + actionId, 3, userId);
+        ;
         return actionId;
-    }
-
-    public UUID userActionItem(UUID userId) {
-        return userActionItem(userId, lifeUpgradeAction());
-    }
-
-    public UUID userActionItem(UUID userId, UUID lifeUpgradeActionId) {
-        UUID actionItemId = UUID.randomUUID();
-        insert("INSERT INTO user_action_items (id, user_id, frequency, action_id) VALUES (:1, :2, :3, :4)", actionItemId, userId, UserActionItemFrequency.DAILY.toString(), lifeUpgradeActionId);;
-        return actionItemId;
     }
 
     private void delete(String sql, Object... ids) {

@@ -3,7 +3,6 @@ package com.futuristlabs.p2p.rest.v1;
 
 import com.futuristlabs.p2p.func.cfg.SystemParam;
 import com.futuristlabs.p2p.func.cfg.SystemParametersRepository;
-import com.futuristlabs.p2p.func.lifeupgrade.LifeUpgradeAction;
 import com.futuristlabs.p2p.func.lifeupgrade.LifeUpgradeCategory;
 import com.futuristlabs.p2p.func.lifeupgrade.ReferenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,48 +58,10 @@ public class AdminController {
         referenceRepository.deleteLifeUpgradeCategory(categoryId);
     }
 
-    @RequestMapping(value = "/lifeUpgradeCategories/{id}/actions", method = GET)
-    @ResponseBody
-    public List<LifeUpgradeAction> lifeUpgradeActionList(@PathVariable("id") UUID categoryId) {
-        return referenceRepository.modifiedLifeUpgradeActionsForCategory(categoryId);
-    }
-
-    @RequestMapping(value = "/lifeUpgradeCategories/{categoryId}/actions", method = POST)
-    @ResponseBody
-    public UUID lifeUpgradeActionCreate(@PathVariable("categoryId") UUID categoryId,
-                                        @RequestBody LifeUpgradeAction action) {
-        if (action.getId() == null) {
-            action.setId(UUID.randomUUID());
-        }
-        action.setLifeUpgradeCategoryId(categoryId);
-
-        referenceRepository.modifyLifeUpgradeAction(action);
-        return action.getId();
-    }
-
-    @RequestMapping(value = "/lifeUpgradeCategories/{categoryId}/actions/{actionId}", method = POST)
-    @ResponseStatus(NO_CONTENT)
-    public void lifeUpgradeActionUpdate(@PathVariable("categoryId") UUID categoryId,
-                                        @PathVariable("actionId") UUID actionId,
-                                        @RequestBody LifeUpgradeAction action) {
-        action.setId(actionId);
-        action.setLifeUpgradeCategoryId(categoryId);
-        referenceRepository.modifyLifeUpgradeAction(action);
-    }
-
-    @RequestMapping(value = "/lifeUpgradeCategories/{categoryId}/actions/{actionId}", method = DELETE)
-    @ResponseStatus(NO_CONTENT)
-    public void lifeUpgradeActionDelete(@PathVariable("categoryId") UUID categoryId,
-                                        @PathVariable("actionId") UUID actionId) {
-        referenceRepository.deleteLifeUpgradeAction(actionId);
-    }
-
     @RequestMapping(value = "/system-params", method = POST)
     @ResponseStatus(NO_CONTENT)
     public void setSystemParameter(@RequestBody SystemParam param) {
         systemParametersRepository.setParameter(param);
     }
-
-
 
 }

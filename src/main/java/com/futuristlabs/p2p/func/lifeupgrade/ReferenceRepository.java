@@ -15,16 +15,6 @@ public interface ReferenceRepository {
 
     void deleteLifeUpgradeCategory(UUID categoryId);
 
-    List<LifeUpgradeAction> modifiedLifeUpgradeActionsForCategory(UUID categoryId);
-
-    List<LifeUpgradeAction> modifiedLifeUpgradeActions(DateTime modifiedSince);
-
-    List<UUID> deletedLifeUpgradeActions(DateTime modifiedSince);
-
-    void modifyLifeUpgradeAction(LifeUpgradeAction action);
-
-    void deleteLifeUpgradeAction(UUID actionId);
-
     List<LifeUpgradeAction> modifiedUserLifeUpgradeActions(UUID userId, DateTime modifiedSince);
 
     List<UUID> deletedUserLifeUpgradeActions(UUID userId, DateTime modifiedSince);

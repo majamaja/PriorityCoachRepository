@@ -9,7 +9,7 @@ import java.util.UUID;
 public class UserActionsLog {
 
     private UUID id;
-    private UUID userActionItemId;
+    private UUID lifeUpgradeActionId;
     private DateTime actionDate;
     private int timesDone;
 
@@ -21,20 +21,20 @@ public class UserActionsLog {
         this.id = id;
     }
 
-    public UUID getUserActionItemId() {
-        return userActionItemId;
-    }
-
-    public void setUserActionItemId(UUID userActionItemId) {
-        this.userActionItemId = userActionItemId;
-    }
-
     public String getActionDate() {
         return Utils.toString(actionDate);
     }
 
     public void setActionDate(String actionDate) {
         this.actionDate = Utils.parseDate(actionDate);
+    }
+
+    public UUID getLifeUpgradeActionId() {
+        return lifeUpgradeActionId;
+    }
+
+    public void setLifeUpgradeActionId(final UUID lifeUpgradeActionId) {
+        this.lifeUpgradeActionId = lifeUpgradeActionId;
     }
 
     @JsonIgnore

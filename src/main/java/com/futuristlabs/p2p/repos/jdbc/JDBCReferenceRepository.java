@@ -10,11 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Repository
 public class JDBCReferenceRepository extends JDBCRepository implements ReferenceRepository {
@@ -29,15 +26,12 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("modifiedSince", modifiedSince != null ? modifiedSince.toDate() : null);
 
-        return db.returnList(sql, params, new RowMapper<LifeUpgradeCategory>() {
-            @Override
-            public LifeUpgradeCategory mapRow(ResultSet rs, int rowNum) throws SQLException {
-                final UUID id = UUID.fromString(rs.getString("id"));
-                final String name = rs.getString("name");
-                final byte[] icon = rs.getBytes("icon");
+        return db.returnList(sql, params, (rs, rowNum) -> {
+            final UUID id = UUID.fromString(rs.getString("id"));
+            final String name = rs.getString("name");
+            final byte[] icon = rs.getBytes("icon");
 
-                return new LifeUpgradeCategory(id, name, icon);
-            }
+            return new LifeUpgradeCategory(id, name, icon);
         });
     }
 
@@ -92,101 +86,11 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
     }
 
     @Override
-    public List<LifeUpgradeAction> modifiedLifeUpgradeActionsForCategory(UUID categoryId) {
-        if (categoryId == null) {
-            return new ArrayList<>();
-        }
-
-        final String sql =
-                " SELECT id, name, life_upgrade_category_id " +
-                " FROM life_upgrade_actions " +
-                " WHERE is_custom = false " +
-                " AND user_id IS NULL " +
-                " AND is_deleted = false " +
-                " AND life_upgrade_category_id = :categoryId ";
-
-        final MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("categoryId", categoryId.toString());
-
-        return db.returnList(sql, params, new LifeUpgradeActionRowMapper());
-    }
-
-    @Override
-    public List<LifeUpgradeAction> modifiedLifeUpgradeActions(DateTime modifiedSince) {
-        final String sql =
-                " SELECT id, name, life_upgrade_category_id " +
-                " FROM life_upgrade_actions " +
-                " WHERE is_custom = false " +
-                " AND user_id IS NULL " +
-                " AND is_deleted = false " +
-                " AND (:modifiedSince IS NULL OR last_modified > :modifiedSince)";
-
-        final MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("modifiedSince", modifiedSince != null ? modifiedSince.toDate() : null);
-
-        return db.returnList(sql, params, new LifeUpgradeActionRowMapper());
-    }
-
-    @Override
-    public List<UUID> deletedLifeUpgradeActions(DateTime modifiedSince) {
-        final String sql =
-                " SELECT id FROM life_upgrade_actions " +
-                " WHERE is_custom = false " +
-                " AND user_id IS NULL " +
-                " AND is_deleted = true " +
-                " AND (:modifiedSince IS NULL OR last_modified > :modifiedSince)";
-
-        final MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("modifiedSince", modifiedSince != null ? modifiedSince.toDate() : null);
-
-        return db.returnList(sql, params, new UUIDMapper());
-    }
-
-    @Override
-    public void modifyLifeUpgradeAction(LifeUpgradeAction lifeUpgradeAction) {
-        if (lifeUpgradeAction == null) {
-            return;
-        }
-
-        final String sql =
-                " INSERT INTO life_upgrade_actions (id, life_upgrade_category_id, name, is_custom) " +
-                " VALUES (:id, :lifeUpgradeCategoryId, :name, false) " +
-                " ON DUPLICATE KEY UPDATE name = :name ";
-
-        final MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", lifeUpgradeAction.getId().toString());
-        params.addValue("lifeUpgradeCategoryId", lifeUpgradeAction.getLifeUpgradeCategoryId().toString());
-        params.addValue("name", lifeUpgradeAction.getName());
-
-        db.update(sql, params);
-    }
-
-    @Override
-    public void deleteLifeUpgradeAction(UUID actionId) {
-        if (actionId == null) {
-            return;
-        }
-
-        final String sql =
-                " UPDATE life_upgrade_actions " +
-                " SET is_deleted = true " +
-                " WHERE is_custom = false " +
-                " AND is_deleted = false " +
-                " AND id = :actionId ";
-
-        final MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("actionId", actionId.toString());
-
-        db.update(sql, params);
-    }
-
-    @Override
     public List<LifeUpgradeAction> modifiedUserLifeUpgradeActions(UUID userId, DateTime modifiedSince) {
         final String sql =
                 " SELECT id, name, life_upgrade_category_id " +
                 " FROM life_upgrade_actions " +
-                " WHERE is_custom = true " +
-                " AND user_id = :userId " +
+                " WHERE user_id = :userId " +
                 " AND is_deleted = false " +
                 " AND (:modifiedSince IS NULL OR last_modified > :modifiedSince)";
 
@@ -201,8 +105,7 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
     public List<UUID> deletedUserLifeUpgradeActions(UUID userId, DateTime modifiedSince) {
         final String sql =
                 " SELECT id FROM life_upgrade_actions " +
-                " WHERE is_custom = true " +
-                " AND user_id = :userId " +
+                " WHERE user_id = :userId " +
                 " AND is_deleted = true " +
                 " AND (:modifiedSince IS NULL OR last_modified > :modifiedSince)";
 
@@ -220,8 +123,8 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
         }
 
         final String sql =
-                " INSERT INTO life_upgrade_actions (id, user_id, life_upgrade_category_id, name, is_custom) " +
-                " VALUES (:id, :userId, :lifeUpgradeCategoryId, :name, true) " +
+                " INSERT INTO life_upgrade_actions (id, user_id, life_upgrade_category_id, name, times_per_week) " +
+                " VALUES (:id, :userId, :lifeUpgradeCategoryId, :name, :timesPerWeek) " +
                 " ON DUPLICATE KEY UPDATE name = :name ";
 
         for (LifeUpgradeAction lifeUpgradeAction : lifeUpgradeActions) {
@@ -230,6 +133,7 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
             params.addValue("userId", userId.toString());
             params.addValue("lifeUpgradeCategoryId", lifeUpgradeAction.getLifeUpgradeCategoryId().toString());
             params.addValue("name", lifeUpgradeAction.getName());
+            params.addValue("timesPerWeek", lifeUpgradeAction.getTimesPerWeek());
 
             db.update(sql, params);
         }
@@ -244,8 +148,7 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
         final String sql =
                 " UPDATE life_upgrade_actions " +
                 " SET is_deleted = true " +
-                " WHERE is_custom = true " +
-                " AND user_id = :userId " +
+                " WHERE user_id = :userId " +
                 " AND is_deleted = false " +
                 " AND id IN (:lifeUpgradeActions) ";
 
@@ -262,12 +165,13 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
             final UUID id = UUID.fromString(rs.getString("id"));
             final String name = rs.getString("name");
             final UUID lifeUpgradeCategoryId = UUID.fromString(rs.getString("life_upgrade_category_id"));
+            final int timePerWeek = rs.getInt("times_per_week");
 
             final LifeUpgradeAction lifeUpgradeAction = new LifeUpgradeAction();
             lifeUpgradeAction.setId(id);
             lifeUpgradeAction.setName(name);
             lifeUpgradeAction.setLifeUpgradeCategoryId(lifeUpgradeCategoryId);
-            lifeUpgradeAction.setCustom(false);
+            lifeUpgradeAction.setTimesPerWeek(timePerWeek);
             return lifeUpgradeAction;
         }
     }

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ReferenceRepositoryTest extends RepositoryTest {
@@ -38,30 +37,6 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     @Test
     public void deletedLifeUpgradeCategoriesNoDate() {
         final List<UUID> uuids = repo.deletedLifeUpgradeCategories(null);
-        assertTrue(uuids.isEmpty());
-    }
-
-    @Test
-    public void modifiedLifeUpgradeActions() {
-        final List<LifeUpgradeAction> actions = repo.modifiedLifeUpgradeActions(new DateTime());
-        assertTrue(actions.isEmpty());
-    }
-
-    @Test
-    public void modifiedLifeUpgradeActionsNoDate() {
-        final List<LifeUpgradeAction> actions = repo.modifiedLifeUpgradeActions(null);
-        assertTrue(actions.isEmpty());
-    }
-
-    @Test
-    public void deletedLifeUpgradeActions() {
-        final List<UUID> uuids = repo.deletedLifeUpgradeActions(new DateTime());
-        assertTrue(uuids.isEmpty());
-    }
-
-    @Test
-    public void deletedLifeUpgradeActionsNoDate() {
-        final List<UUID> uuids = repo.deletedLifeUpgradeActions(null);
         assertTrue(uuids.isEmpty());
     }
 
@@ -144,7 +119,7 @@ public class ReferenceRepositoryTest extends RepositoryTest {
         LifeUpgradeCategory category = new LifeUpgradeCategory();
         category.setId(UUID.randomUUID());
         category.setName("Some Test Name");
-        category.setIcon(new byte[]{0, 0, 0, 0});
+        category.setIcon(new byte[] { 0, 0, 0, 0 });
         repo.modifyLifeUpgradeCategory(category);
     }
 
@@ -178,44 +153,6 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     @Test
     public void deleteLifeUpgradeCategory_null() {
         repo.deleteLifeUpgradeCategory(null);
-    }
-
-
-    @Test
-    public void modifiedLifeUpgradeActionsForCategory() {
-        assertTrue(repo.modifiedLifeUpgradeActionsForCategory(UUID.randomUUID()).isEmpty());
-    }
-
-    @Test
-    public void modifiedLifeUpgradeActionsForCategoryWithNull() {
-        assertTrue(repo.modifiedLifeUpgradeActionsForCategory(null).isEmpty());
-    }
-
-    @Test
-    public void modifyLifeUpgradeAction() {
-        final UUID lifeUpgradeCategory = sampleData.lifeUpgradeCategory();
-
-        final LifeUpgradeAction action = new LifeUpgradeAction();
-        action.setId(UUID.randomUUID());
-        action.setLifeUpgradeCategoryId(lifeUpgradeCategory);
-        action.setName("Test name");
-
-        repo.modifyLifeUpgradeAction(action);
-    }
-
-    @Test
-    public void modifyLifeUpgradeActionWithNull() {
-        repo.modifyLifeUpgradeAction(null);
-    }
-
-    @Test
-    public void deleteLifeUpgradeAction() {
-        repo.deleteLifeUpgradeAction(UUID.randomUUID());
-    }
-
-    @Test
-    public void deleteLifeUpgradeActionNull() {
-        repo.deleteLifeUpgradeAction(null);
     }
 
 }
