@@ -3,6 +3,7 @@ package com.futuristlabs.p2p.func.sync;
 import com.futuristlabs.p2p.func.auth.AuthenticationRequest;
 import com.futuristlabs.p2p.func.auth.Device;
 import com.futuristlabs.p2p.func.auth.SessionUser;
+import com.futuristlabs.p2p.func.userprofile.ChangePasswordRequest;
 import com.futuristlabs.p2p.func.userprofile.UserProfile;
 
 import java.util.UUID;
@@ -26,6 +27,8 @@ public interface UsersRepository {
     void registerUserDevice(UUID userId, Device device);
 
     void updatePassword(String email, String newPassword);
+
+    void updatePassword(ChangePasswordRequest request);
 
     UserProfile findProfileById(UUID userId);
 

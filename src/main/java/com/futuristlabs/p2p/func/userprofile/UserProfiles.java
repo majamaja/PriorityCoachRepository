@@ -24,4 +24,7 @@ public class UserProfiles {
         return user;
     }
 
+    public void changePassword(final ChangePasswordRequest request) {
+        repository.updatePassword(request);
+    }
 }

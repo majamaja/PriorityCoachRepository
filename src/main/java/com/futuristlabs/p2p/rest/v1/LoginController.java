@@ -3,6 +3,7 @@ package com.futuristlabs.p2p.rest.v1;
 
 import com.futuristlabs.p2p.func.auth.*;
 import com.futuristlabs.p2p.func.sync.UserSyncData;
+import com.futuristlabs.p2p.func.userprofile.ChangePasswordRequest;
 import com.futuristlabs.p2p.func.userprofile.UserProfile;
 import com.futuristlabs.p2p.func.userprofile.UserProfiles;
 import com.futuristlabs.p2p.rest.common.RestException;
@@ -81,6 +82,14 @@ public class LoginController {
     public UserProfile updateUserProfile(@AuthenticationPrincipal SessionUser user, @RequestBody UserProfile userProfile) {
         userProfile.setId(user.getId());
         return userProfiles.update(userProfile);
+    }
+
+
+    @RequestMapping(value = "/user/change-password", method = POST)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changePassword(@AuthenticationPrincipal SessionUser user, @RequestBody ChangePasswordRequest request) {
+        request.setUserId(user.getId());
+        userProfiles.changePassword(request);
     }
 
 }

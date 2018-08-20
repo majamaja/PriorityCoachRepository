@@ -5,6 +5,7 @@ import com.futuristlabs.p2p.func.auth.AuthenticationRequest;
 import com.futuristlabs.p2p.func.auth.Device;
 import com.futuristlabs.p2p.func.auth.SessionUser;
 import com.futuristlabs.p2p.func.sync.UsersRepository;
+import com.futuristlabs.p2p.func.userprofile.ChangePasswordRequest;
 import com.futuristlabs.p2p.func.userprofile.UserProfile;
 import com.futuristlabs.p2p.utils.Utils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -166,6 +167,18 @@ public class JDBCUsersRepository extends JDBCRepository implements UsersReposito
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("email", email);
         params.addValue("newPassword", hash(newPassword));
+
+        db.update(sql, params);
+    }
+
+    @Override
+    public void updatePassword(ChangePasswordRequest request) {
+        final String sql = "UPDATE native_users SET password = :newPassword WHERE id = :userId AND password = oldPassword";
+
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("userId", request.getUserId());
+        params.addValue("oldPassword", hash(request.getOldPassword()));
+        params.addValue("newPassword", hash(request.getNewPassword()));
 
         db.update(sql, params);
     }
