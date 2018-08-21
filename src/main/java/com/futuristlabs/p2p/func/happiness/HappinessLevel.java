@@ -10,14 +10,16 @@ public class HappinessLevel {
     private UUID id;
     private int level;
     private LocalDate checkinDate;
+    private UUID userId;
 
     public HappinessLevel() {
     }
 
-    public HappinessLevel(UUID id, int level, LocalDate checkinDate) {
+    public HappinessLevel(UUID id, int level, LocalDate checkinDate, UUID userId) {
         this.id = id;
         this.level = level;
         this.checkinDate = checkinDate;
+        this.userId = userId;
     }
 
     public UUID getId() {
@@ -42,6 +44,14 @@ public class HappinessLevel {
 
     public void setCheckinDate(String checkinDate) {
         this.checkinDate = Utils.parseDate(checkinDate).toLocalDate();
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(final UUID userId) {
+        this.userId = userId;
     }
 
     @JsonIgnore

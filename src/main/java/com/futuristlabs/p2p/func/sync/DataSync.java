@@ -45,16 +45,13 @@ public class DataSync {
         userSyncData.updated.lifeUpgradeActions = referenceRepository.modifiedUserLifeUpgradeActions(userId, modifiedSince);
         userSyncData.updated.userActionsLogs = userActionsRepository.modifiedActionsLogs(userId, modifiedSince);
         userSyncData.updated.userHappinessLevels = userHappinessRepository.modifiedHappinessLevel(userId, modifiedSince);
-        userSyncData.updated.userFriends = userFriendsRepository.modifiedFriends(userId, modifiedSince);
+
+        userSyncData.updated.userFriends = userFriendsRepository.modifiedFriends(userId, null);
         for (UserFriend friend : userSyncData.updated.userFriends) {
 //            show add data no matter the permissions
-
             friend.setLifeUpgradeActions(referenceRepository.modifiedUserLifeUpgradeActions(friend.getFriendId(), null));
-            friend.setFriendActionsLog(userActionsRepository.modifiedActionsLogs(friend.getFriendId(), null));
-
-//            friend.setLifeUpgradeActions(referenceRepository.modifiedUserLifeUpgradeActionsFilteredByPermissions(friend.getFriendId(), null, userId));
-//            friend.setFriendActions(userActionsRepository.modifiedActionItemsFilteredByPermissions(friend.getFriendId(), null, userId));
-//            friend.setFriendActionsLog(userActionsRepository.modifiedActionsLogsFilteredByPermissions(friend.getFriendId(), null, userId));
+            friend.setActionsLog(userActionsRepository.modifiedActionsLogs(friend.getFriendId(), null));
+            friend.setHappinessLevels(userHappinessRepository.modifiedHappinessLevel(friend.getFriendId(), null));
         }
         userSyncData.updated.userFriendPermissions = userFriendsRepository.modifiedFriendsPermissions(userId, modifiedSince);
         userSyncData.updated.userNotes = userNotesRepository.modifiedNotes(userId, modifiedSince);

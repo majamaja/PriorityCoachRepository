@@ -4,12 +4,9 @@ import com.futuristlabs.p2p.func.happiness.HappinessLevel;
 import com.futuristlabs.p2p.func.happiness.UserHappinessRepository;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +16,7 @@ public class JDBCUserHappinessRepository extends JDBCRepository implements UserH
     @Override
     public List<HappinessLevel> modifiedHappinessLevel(UUID userId, DateTime modifiedSince) {
         final String sql =
-                " SELECT id, level, checkin_date" +
+                " SELECT id, level, checkin_date, user_id " +
                 " FROM happiness_level_checkins " +
                 " WHERE (:modifiedSince IS NULL OR last_modified > :modifiedSince) " +
                 " AND user_id = :userId ";
@@ -28,15 +25,13 @@ public class JDBCUserHappinessRepository extends JDBCRepository implements UserH
         params.addValue("modifiedSince", modifiedSince != null ? modifiedSince.toDate() : null);
         params.addValue("userId", userId.toString());
 
-        return db.returnList(sql, params, new RowMapper<HappinessLevel>() {
-            @Override
-            public HappinessLevel mapRow(ResultSet rs, int rowNum) throws SQLException {
-                final UUID id = UUID.fromString(rs.getString("id"));
-                final int happinessLevel = rs.getInt("level");
-                final LocalDate checkinDate = new LocalDate(rs.getDate("checkin_date"));
+        return db.returnList(sql, params, (rs, rowNum) -> {
+            final UUID id = UUID.fromString(rs.getString("id"));
+            final int happinessLevel = rs.getInt("level");
+            final LocalDate checkinDate = new LocalDate(rs.getDate("checkin_date"));
+            final UUID userId1 = UUID.fromString(rs.getString("user_id"));
 
-                return new HappinessLevel(id, happinessLevel, checkinDate);
-            }
+            return new HappinessLevel(id, happinessLevel, checkinDate, userId1);
         });
 
     }

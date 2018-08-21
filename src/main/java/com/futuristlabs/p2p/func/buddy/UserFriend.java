@@ -1,5 +1,6 @@
 package com.futuristlabs.p2p.func.buddy;
 
+import com.futuristlabs.p2p.func.happiness.HappinessLevel;
 import com.futuristlabs.p2p.func.lifeupgrade.LifeUpgradeAction;
 import com.futuristlabs.p2p.func.useractions.UserActionsLog;
 import lombok.Data;
@@ -18,7 +19,8 @@ public class UserFriend {
     private String friendEmail;
     private String friendPhone;
     private List<LifeUpgradeAction> lifeUpgradeActions;
-    private List<UserActionsLog> friendActionsLog;
+    private List<UserActionsLog> actionsLog;
+    private List<HappinessLevel> happinessLevels;
 
     public UserFriendInvitationStatus getStatus() {
         if (friendId != null) {
