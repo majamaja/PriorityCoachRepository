@@ -189,3 +189,24 @@ INSERT INTO system_parameters (parameter_key, parameter_value, parameter_blob) V
   ('APN Is Production', 'False', NULL),
   ('APN Certificate', NULL, NULL),
   ('APN Password', '', NULL);
+
+
+CREATE VIEW user_permissions AS (
+    SELECT
+        ufp.user_id as user_id,
+        uf.friend_id as access_to,
+        ufp.life_upgrade_action_id,
+        ufp.visible
+    FROM user_friend_permissions ufp
+    JOIN user_friends uf ON ufp.friendship_id = uf.id AND ufp.user_id = uf.user_id
+    WHERE uf.is_deleted = false
+    UNION ALL
+    SELECT
+        ufp.user_id as user_id,
+        uf.user_id as access_to,
+        ufp.life_upgrade_action_id,
+        ufp.visible
+    FROM user_friend_permissions ufp
+    JOIN user_friends uf ON ufp.friendship_id = uf.id AND ufp.user_id = uf.friend_id
+    WHERE uf.is_deleted = false
+);
