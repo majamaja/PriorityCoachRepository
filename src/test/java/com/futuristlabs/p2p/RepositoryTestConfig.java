@@ -21,8 +21,7 @@ import static java.sql.Connection.TRANSACTION_REPEATABLE_READ;
 @EnableTransactionManagement(proxyTargetClass = true)
 public class RepositoryTestConfig {
     private static final String JDBC_DATABASE_URL = "JDBC_DATABASE_URL";
-    private static final String HEROKU_DATABASE_URL = "jdbc:mysql://localhost/p2p?user=p2p&password=p2p&useSSL=false";
-    private static final String JDBC_URL = HEROKU_DATABASE_URL;
+    private static final String JDBC_URL = "jdbc:mysql://localhost/p2p?user=p2p&password=p2p&useSSL=false";
 
     private DataSource dataSource;
 
