@@ -88,7 +88,7 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
     @Override
     public List<LifeUpgradeAction> modifiedUserLifeUpgradeActions(UUID userId, DateTime modifiedSince) {
         final String sql =
-                " SELECT id, name, life_upgrade_category_id " +
+                " SELECT id, name, life_upgrade_category_id, times_per_week " +
                 " FROM life_upgrade_actions " +
                 " WHERE user_id = :userId " +
                 " AND is_deleted = false " +
@@ -100,6 +100,25 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
 
         return db.returnList(sql, params, new LifeUpgradeActionRowMapper());
     }
+
+    @Override
+    public List<LifeUpgradeAction> modifiedUserLifeUpgradeActionsRestricted(UUID userId, DateTime modifiedSince, UUID friendId) {
+        final String sql =
+                " SELECT id, name, life_upgrade_category_id, times_per_week " +
+                " FROM life_upgrade_actions " +
+                " WHERE user_id = :userId " +
+                " AND is_deleted = false " +
+                " AND (:modifiedSince IS NULL OR last_modified > :modifiedSince)" +
+                " AND id IN (SELECT life_upgrade_action_id FROM user_permissions WHERE user_id = :userId AND access_to = :friendId AND visible = true) ";
+
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("modifiedSince", modifiedSince != null ? modifiedSince.toDate() : null);
+        params.addValue("userId", userId.toString());
+        params.addValue("friendId", friendId.toString());
+
+        return db.returnList(sql, params, new LifeUpgradeActionRowMapper());
+    }
+
 
     @Override
     public List<UUID> deletedUserLifeUpgradeActions(UUID userId, DateTime modifiedSince) {

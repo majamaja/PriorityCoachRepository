@@ -17,6 +17,11 @@ public interface ReferenceRepository {
 
     List<LifeUpgradeAction> modifiedUserLifeUpgradeActions(UUID userId, DateTime modifiedSince);
 
+    /**
+       Filter the list by permissions, granted from user to friend
+     */
+    List<LifeUpgradeAction> modifiedUserLifeUpgradeActionsRestricted(UUID userId, DateTime modifiedSince, UUID friendId);
+
     List<UUID> deletedUserLifeUpgradeActions(UUID userId, DateTime modifiedSince);
 
     void modifyUserLifeUpgradeActions(UUID userId, List<LifeUpgradeAction> lifeUpgradeActions);

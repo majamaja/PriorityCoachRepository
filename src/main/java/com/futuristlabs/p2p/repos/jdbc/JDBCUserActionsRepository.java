@@ -30,6 +30,21 @@ public class JDBCUserActionsRepository extends JDBCRepository implements UserAct
     }
 
     @Override
+    public List<UserActionsLog> modifiedActionsLogsRestricted(final UUID userId, final DateTime modifiedSince, final UUID friendId) {
+        final String sql = onlyModifiedForUser(
+                " SELECT id, user_id, life_upgrade_action_id, action_date, times_done " +
+                " FROM user_actions_log ",
+                " AND life_upgrade_action_id IN (SELECT life_upgrade_action_id FROM user_permissions WHERE user_id = :userId AND access_to = :friendId AND visible = true) ");
+
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("modifiedSince", modifiedSince != null ? modifiedSince.toDate() : null);
+        params.addValue("userId", userId.toString());
+        params.addValue("friendId", friendId.toString());
+
+        return db.returnList(sql, params, new UserActionsLogRowMapper());
+    }
+
+    @Override
     public List<UUID> deletedActionsLogs(UUID userId, DateTime modifiedSince) {
         final String sql = deletedSinceForUser("user_actions_log");
 

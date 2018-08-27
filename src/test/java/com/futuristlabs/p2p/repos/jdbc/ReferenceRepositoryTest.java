@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ReferenceRepositoryTest extends RepositoryTest {
@@ -35,7 +36,7 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void deletedLifeUpgradeCategoriesNoDate() {
+    public void deletedLifeUpgradeCategories_NoDate() {
         final List<UUID> uuids = repo.deletedLifeUpgradeCategories(null);
         assertTrue(uuids.isEmpty());
     }
@@ -47,8 +48,55 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void modifiedUserLifeUpgradeActionsNoDate() {
+    public void modifiedUserLifeUpgradeActions_noDate() {
         final List<LifeUpgradeAction> actions = repo.modifiedUserLifeUpgradeActions(UUID.randomUUID(), null);
+        assertTrue(actions.isEmpty());
+    }
+
+    @Test
+    public void modifiedUserLifeUpgradeActions_WithData() {
+        final UUID user = sampleData.user();
+        sampleData.lifeUpgradeActionWithUser(user);
+        sampleData.lifeUpgradeActionWithUser(user);
+        sampleData.lifeUpgradeActionWithUser(user);
+
+        final List<LifeUpgradeAction> actions = repo.modifiedUserLifeUpgradeActions(user, null);
+        assertEquals(3, actions.size());
+    }
+
+    @Test
+    public void modifiedUserLifeUpgradeActionsRestricted_NothingShared() {
+        final UUID user = sampleData.user();
+        final UUID friend = sampleData.user();
+        sampleData.friendship(user, friend);
+
+        final List<LifeUpgradeAction> actions = repo.modifiedUserLifeUpgradeActionsRestricted(user, null, friend);
+        assertTrue(actions.isEmpty());
+    }
+
+    @Test
+    public void modifiedUserLifeUpgradeActionsRestricted_WithSharedItem() {
+        final UUID user = sampleData.user();
+        final UUID friend = sampleData.user();
+        final UUID friendship = sampleData.friendship(user, friend);
+
+        final UUID action = sampleData.lifeUpgradeActionWithUser(friend);
+        sampleData.permissions(friend, friendship, action, true);
+
+        final UUID sharedActionId = repo.modifiedUserLifeUpgradeActionsRestricted(friend, null, user).get(0).getId();
+        assertEquals(action, sharedActionId);
+    }
+
+    @Test
+    public void modifiedUserLifeUpgradeActionsRestricted_WithForbiddenItem() {
+        final UUID user = sampleData.user();
+        final UUID friend = sampleData.user();
+        final UUID friendship = sampleData.friendship(user, friend);
+
+        final UUID action = sampleData.lifeUpgradeActionWithUser(friend);
+        sampleData.permissions(friend, friendship, action, false);
+
+        final List<LifeUpgradeAction> actions = repo.modifiedUserLifeUpgradeActionsRestricted(friend, null, user);
         assertTrue(actions.isEmpty());
     }
 
@@ -59,7 +107,7 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void deletedUserLifeUpgradeActionsNoDate() {
+    public void deletedUserLifeUpgradeActions_NoDate() {
         final List<UUID> uuids = repo.deletedUserLifeUpgradeActions(UUID.randomUUID(), null);
         assertTrue(uuids.isEmpty());
     }
@@ -79,7 +127,7 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void modifyUserLifeUpgradeActionsNoActions() {
+    public void modifyUserLifeUpgradeActions_NoActions() {
         LifeUpgradeAction lifeUpgradeAction = new LifeUpgradeAction();
         lifeUpgradeAction.setId(UUID.randomUUID());
         lifeUpgradeAction.setLifeUpgradeCategoryId(UUID.randomUUID());
@@ -89,7 +137,7 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void modifyUserLifeUpgradeActionsNoActionsNull() {
+    public void modifyUserLifeUpgradeActions_NoActionsNull() {
         LifeUpgradeAction lifeUpgradeAction = new LifeUpgradeAction();
         lifeUpgradeAction.setId(UUID.randomUUID());
         lifeUpgradeAction.setLifeUpgradeCategoryId(UUID.randomUUID());
@@ -104,12 +152,12 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void deleteUserLifeUpgradeActionsNoActions() {
+    public void deleteUserLifeUpgradeActions_NoActions() {
         repo.deleteUserLifeUpgradeActions(UUID.randomUUID(), Collections.<UUID>emptyList());
     }
 
     @Test
-    public void deleteUserLifeUpgradeActionsNoActionsNull() {
+    public void deleteUserLifeUpgradeActions_NoActionsNull() {
         repo.deleteUserLifeUpgradeActions(UUID.randomUUID(), null);
     }
 
@@ -124,7 +172,7 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void modifyLifeUpgradeCategoryNoIcon() {
+    public void modifyLifeUpgradeCategory_NoIcon() {
         LifeUpgradeCategory category = new LifeUpgradeCategory();
         category.setId(UUID.randomUUID());
         category.setName("Some Test Name when NoIcon");
@@ -132,7 +180,7 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void modifyLifeUpgradeCategoryWithNull() {
+    public void modifyLifeUpgradeCategory_WithNull() {
         repo.modifyLifeUpgradeCategory(null);
     }
 

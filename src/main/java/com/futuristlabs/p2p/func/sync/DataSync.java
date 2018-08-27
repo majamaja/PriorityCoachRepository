@@ -48,10 +48,9 @@ public class DataSync {
 
         userSyncData.updated.userFriends = userFriendsRepository.findAllFriends(userId);
         for (UserFriend friend : userSyncData.updated.userFriends) {
-//            show add data no matter the permissions
-            friend.setLifeUpgradeActions(referenceRepository.modifiedUserLifeUpgradeActions(friend.getFriendId(), null));
-            friend.setActionsLog(userActionsRepository.modifiedActionsLogs(friend.getFriendId(), null));
-            friend.setHappinessLevels(userHappinessRepository.modifiedHappinessLevel(friend.getFriendId(), null));
+            friend.setLifeUpgradeActions(referenceRepository.modifiedUserLifeUpgradeActionsRestricted(friend.getFriendId(), modifiedSince, userId));
+            friend.setActionsLog(userActionsRepository.modifiedActionsLogsRestricted(friend.getFriendId(), modifiedSince, userId));
+            friend.setHappinessLevels(userHappinessRepository.modifiedHappinessLevel(friend.getFriendId(), modifiedSince));
         }
         userSyncData.updated.userFriendPermissions = userFriendsRepository.modifiedFriendsPermissions(userId, modifiedSince);
         userSyncData.updated.userNotes = userNotesRepository.modifiedNotes(userId, modifiedSince);
@@ -69,14 +68,14 @@ public class DataSync {
         referenceRepository.modifyUserLifeUpgradeActions(userId, userSyncData.updated.lifeUpgradeActions);
         userActionsRepository.modifyActionsLogs(userId, userSyncData.updated.userActionsLogs);
         userHappinessRepository.modifyHappinessLevel(userId, userSyncData.updated.userHappinessLevels);
-        userNotesRepository.modifyNotes(userId, userSyncData.updated.userNotes);
         userFriendsRepository.modifyFriends(userId, userSyncData.updated.userFriends);
         userFriendsRepository.modifyFriendsPermissions(userId, userSyncData.updated.userFriendPermissions);
+        userNotesRepository.modifyNotes(userId, userSyncData.updated.userNotes);
 
         referenceRepository.deleteUserLifeUpgradeActions(userId, userSyncData.deleted.lifeUpgradeActions);
         userActionsRepository.deleteActionsLogs(userId, userSyncData.deleted.userActionsLogs);
-        userNotesRepository.deleteNotes(userId, userSyncData.deleted.userNotes);
         userFriendsRepository.deleteFriends(userId, userSyncData.deleted.userFriends);
         userFriendsRepository.deleteFriendsPermissions(userId, userSyncData.deleted.userFriendPermissions);
+        userNotesRepository.deleteNotes(userId, userSyncData.deleted.userNotes);
     }
 }

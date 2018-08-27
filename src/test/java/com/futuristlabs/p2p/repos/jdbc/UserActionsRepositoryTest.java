@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class UserActionsRepositoryTest extends RepositoryTest {
@@ -21,14 +22,52 @@ public class UserActionsRepositoryTest extends RepositoryTest {
 
     @Test
     public void modifiedActionsLogs() {
-        final List<UserActionsLog> categories = repo.modifiedActionsLogs(UUID.randomUUID(), new DateTime());
-        assertTrue(categories.isEmpty());
+        final List<UserActionsLog> actionLogs = repo.modifiedActionsLogs(UUID.randomUUID(), new DateTime());
+        assertTrue(actionLogs.isEmpty());
     }
 
     @Test
-    public void modifiedActionsLogsNoDate() {
-        final List<UserActionsLog> categories = repo.modifiedActionsLogs(UUID.randomUUID(), null);
-        assertTrue(categories.isEmpty());
+    public void modifiedActionsLogs_NoDate() {
+        final List<UserActionsLog> actionLogs = repo.modifiedActionsLogs(UUID.randomUUID(), null);
+        assertTrue(actionLogs.isEmpty());
+    }
+
+    @Test
+    public void modifiedActionsLogs_WithData() {
+        final UUID user = sampleData.user();
+        final UUID action = sampleData.lifeUpgradeActionWithUser(user);
+        sampleData.actionLog(user, action);
+
+        final List<UserActionsLog> actionLogs = repo.modifiedActionsLogs(user, null);
+        assertEquals(action, actionLogs.get(0).getLifeUpgradeActionId());
+    }
+
+    @Test
+    public void modifiedActionsLogsRestricted_WithData() {
+        final UUID friendA = sampleData.user();
+        final UUID friendB = sampleData.user();
+        final UUID friendship = sampleData.friendship(friendA, friendB);
+
+        final UUID actionFriendA = sampleData.lifeUpgradeActionWithUser(friendA);
+        sampleData.actionLog(friendA, actionFriendA);
+
+        sampleData.permissions(friendA, friendship, actionFriendA, true);
+
+        final List<UserActionsLog> friendActionLogs = repo.modifiedActionsLogsRestricted(friendA, null, friendB);
+        assertEquals(actionFriendA, friendActionLogs.get(0).getLifeUpgradeActionId());
+    }
+
+    @Test
+    public void modifiedActionsLogsRestricted_ActionNotShared() {
+        final UUID friendA = sampleData.user();
+        final UUID friendB = sampleData.user();
+        final UUID friendship = sampleData.friendship(friendA, friendB);
+
+        final UUID actionFriendA = sampleData.lifeUpgradeActionWithUser(friendA);
+        sampleData.actionLog(friendA, actionFriendA);
+
+        final List<UserActionsLog> friendActionLogs = repo.modifiedActionsLogsRestricted(friendA, null, friendB);
+        assertTrue(friendActionLogs.isEmpty());
     }
 
     @Test

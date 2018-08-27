@@ -60,8 +60,19 @@ public class SampleData {
     public UUID lifeUpgradeAction(UUID userId, UUID lifeUpgradeCategoryId) {
         UUID actionId = UUID.randomUUID();
         insert("INSERT INTO life_upgrade_actions (id, life_upgrade_category_id, name, times_per_week, user_id) VALUES (:1, :2, :3, :4, :5)", actionId, lifeUpgradeCategoryId, "Upgrade Action " + actionId, 3, userId);
-        ;
         return actionId;
+    }
+
+    public UUID permissions(final UUID userId, final UUID friendshipId, final UUID actionId, final boolean visible) {
+        UUID permissionId = UUID.randomUUID();
+        insert("INSERT INTO user_friend_permissions (id, user_id, friendship_id, life_upgrade_action_id, visible) VALUES (:1, :2, :3, :4, :5)", permissionId, userId, friendshipId, actionId, visible);
+        return permissionId;
+    }
+
+    public UUID actionLog(final UUID userId, final UUID actionId) {
+        UUID actionLogId = UUID.randomUUID();
+        insert("INSERT INTO user_actions_log (id, user_id, life_upgrade_action_id) VALUES (:1, :2, :3)", actionLogId, userId, actionId);
+        return actionLogId;
     }
 
     private void delete(String sql, Object... ids) {
