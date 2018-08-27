@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class UserFriendsRepositoryTest extends RepositoryTest {
@@ -22,15 +23,26 @@ public class UserFriendsRepositoryTest extends RepositoryTest {
     private UserFriendsRepository repo;
 
     @Test
-    public void modifiedFriends() {
-        final List<UserFriend> categories = repo.modifiedFriends(UUID.randomUUID(), new DateTime());
-        assertTrue(categories.isEmpty());
+    public void findAllFriends_nonExistingUser() {
+        final List<UserFriend> friends = repo.findAllFriends(UUID.randomUUID());
+        assertTrue(friends.isEmpty());
     }
 
     @Test
-    public void modifiedFriendsNoDate() {
-        final List<UserFriend> categories = repo.modifiedFriends(UUID.randomUUID(), null);
-        assertTrue(categories.isEmpty());
+    public void findAllFriends_userWithNoFriends() {
+        final UUID user = sampleData.user();
+        final List<UserFriend> friends = repo.findAllFriends(user);
+        assertTrue(friends.isEmpty());
+    }
+
+    @Test
+    public void findAllFriends_userWithFriends() {
+        final UUID user = sampleData.user();
+        final UUID friend = sampleData.user();
+        sampleData.friendship(user, friend);
+
+        final List<UserFriend> friends = repo.findAllFriends(user);
+        assertEquals(1, friends.size());
     }
 
     @Test

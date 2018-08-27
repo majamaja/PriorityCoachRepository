@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserFriendsRepository {
-    List<UserFriend> modifiedFriends(UUID userId, DateTime modifiedSince);
+    List<UserFriend> findAllFriends(UUID userId);
 
     List<UserFriendPermission> modifiedFriendsPermissions(UUID userId, DateTime modifiedSince);
 

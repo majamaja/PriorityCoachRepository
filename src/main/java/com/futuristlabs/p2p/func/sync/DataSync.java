@@ -46,7 +46,7 @@ public class DataSync {
         userSyncData.updated.userActionsLogs = userActionsRepository.modifiedActionsLogs(userId, modifiedSince);
         userSyncData.updated.userHappinessLevels = userHappinessRepository.modifiedHappinessLevel(userId, modifiedSince);
 
-        userSyncData.updated.userFriends = userFriendsRepository.modifiedFriends(userId, null);
+        userSyncData.updated.userFriends = userFriendsRepository.findAllFriends(userId);
         for (UserFriend friend : userSyncData.updated.userFriends) {
 //            show add data no matter the permissions
             friend.setLifeUpgradeActions(referenceRepository.modifiedUserLifeUpgradeActions(friend.getFriendId(), null));
@@ -69,17 +69,14 @@ public class DataSync {
         referenceRepository.modifyUserLifeUpgradeActions(userId, userSyncData.updated.lifeUpgradeActions);
         userActionsRepository.modifyActionsLogs(userId, userSyncData.updated.userActionsLogs);
         userHappinessRepository.modifyHappinessLevel(userId, userSyncData.updated.userHappinessLevels);
+        userNotesRepository.modifyNotes(userId, userSyncData.updated.userNotes);
         userFriendsRepository.modifyFriends(userId, userSyncData.updated.userFriends);
         userFriendsRepository.modifyFriendsPermissions(userId, userSyncData.updated.userFriendPermissions);
-        userNotesRepository.modifyNotes(userId, userSyncData.updated.userNotes);
 
-        System.out.println(userSyncData);
-        System.out.println(userSyncData.deleted);
-        System.out.println(userSyncData.deleted.lifeUpgradeActions);
         referenceRepository.deleteUserLifeUpgradeActions(userId, userSyncData.deleted.lifeUpgradeActions);
         userActionsRepository.deleteActionsLogs(userId, userSyncData.deleted.userActionsLogs);
+        userNotesRepository.deleteNotes(userId, userSyncData.deleted.userNotes);
         userFriendsRepository.deleteFriends(userId, userSyncData.deleted.userFriends);
         userFriendsRepository.deleteFriendsPermissions(userId, userSyncData.deleted.userFriendPermissions);
-        userNotesRepository.deleteNotes(userId, userSyncData.deleted.userNotes);
     }
 }

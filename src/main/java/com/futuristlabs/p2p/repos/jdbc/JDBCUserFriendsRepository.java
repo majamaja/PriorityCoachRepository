@@ -17,17 +17,15 @@ import java.util.UUID;
 public class JDBCUserFriendsRepository extends JDBCRepository implements UserFriendsRepository {
 
     @Override
-    public List<UserFriend> modifiedFriends(final UUID userId, DateTime modifiedSince) {
+    public List<UserFriend> findAllFriends(final UUID userId) {
         final String sql =
                 " SELECT uf.id, uf.user_id, uf.friend_id, u.name as friend_name, uf.friend_email, uf.friend_phone " +
                 " FROM user_friends uf " +
                 " LEFT JOIN users u ON uf.friend_id = u.id " +
                 " WHERE uf.is_deleted = false " +
-                " AND (:modifiedSince IS NULL OR uf.last_modified > :modifiedSince) " +
                 " AND (uf.user_id = :userId OR uf.friend_id = :userId) ";
 
         final MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("modifiedSince", modifiedSince != null ? modifiedSince.toDate() : null);
         params.addValue("userId", userId.toString());
 
         return db.returnList(sql, params, new UserFriendRowMapper(userId));
