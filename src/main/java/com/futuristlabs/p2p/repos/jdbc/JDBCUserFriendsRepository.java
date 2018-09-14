@@ -119,7 +119,17 @@ public class JDBCUserFriendsRepository extends JDBCRepository implements UserFri
 
     @Override
     public void deleteFriends(UUID userId, List<UUID> userFriends) {
-        deleteFromTable("user_friends", userId, userFriends);
+        if (userFriends == null || userFriends.isEmpty()) {
+            return;
+        }
+
+        final String sql = "UPDATE user_friends SET is_deleted = true WHERE (user_id = :userId OR friend_id = :userId) AND id IN (:ids)";
+
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("userId", userId.toString());
+        params.addValue("ids", toStringList(userFriends));
+
+        db.update(sql, params);
     }
 
     @Override

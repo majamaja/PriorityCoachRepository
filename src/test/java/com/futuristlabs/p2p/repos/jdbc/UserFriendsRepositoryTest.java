@@ -135,18 +135,40 @@ public class UserFriendsRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void deleteFriends() {
+    public void deleteFriends_NonExisting() {
         repo.deleteFriends(UUID.randomUUID(), Arrays.asList(UUID.randomUUID()));
     }
 
     @Test
-    public void deleteFriendsNoData() {
+    public void deleteFriends_NoData() {
         repo.deleteFriends(UUID.randomUUID(), new ArrayList<UUID>());
     }
 
     @Test
-    public void deleteFriendsNoDataNull() {
+    public void deleteFriends_NoDataNull() {
         repo.deleteFriends(UUID.randomUUID(), null);
+    }
+
+    @Test
+    public void deleteFriends_deleteByUser() {
+        final UUID userA = sampleData.user();
+        final UUID userB = sampleData.user();
+        final UUID friendship = sampleData.friendship(userA, userB);
+
+        repo.deleteFriends(userA, Arrays.asList(friendship));
+        assertTrue(repo.findAllFriends(userA).isEmpty());
+        assertTrue(repo.findAllFriends(userB).isEmpty());
+    }
+
+    @Test
+    public void deleteFriends_deleteByFriend() {
+        final UUID userA = sampleData.user();
+        final UUID userB = sampleData.user();
+        final UUID friendship = sampleData.friendship(userA, userB);
+
+        repo.deleteFriends(userB, Arrays.asList(friendship));
+        assertTrue(repo.findAllFriends(userA).isEmpty());
+        assertTrue(repo.findAllFriends(userB).isEmpty());
     }
 
     @Test
