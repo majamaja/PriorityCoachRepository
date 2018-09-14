@@ -65,7 +65,7 @@ CREATE TABLE life_upgrade_actions (
   life_upgrade_category_id  CHAR(36) NOT NULL,
   name                      VARCHAR(255),
   user_id                   CHAR(36) NOT NULL,
-  times_per_week            INT NOT NULL CHECK (timesPerWeek > 0),
+  times_per_week            INT NOT NULL CHECK (times_per_week > 0),
   last_modified             TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   is_deleted                BOOL NOT NULL DEFAULT false,
 
