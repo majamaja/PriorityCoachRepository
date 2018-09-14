@@ -115,7 +115,7 @@ public class Authentication {
         }
 
         final String newPassword = Security.generatePassword();
-        usersRepository.updatePassword(email, newPassword);
+        usersRepository.setPassword(email, newPassword);
         mailNotifier.sendNewPasswordEmail(email, newPassword);
         return true;
     }

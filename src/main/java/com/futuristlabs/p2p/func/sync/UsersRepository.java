@@ -26,7 +26,7 @@ public interface UsersRepository {
 
     void registerUserDevice(UUID userId, Device device);
 
-    void updatePassword(String email, String newPassword);
+    void setPassword(String email, String newPassword);
 
     void updatePassword(ChangePasswordRequest request);
 

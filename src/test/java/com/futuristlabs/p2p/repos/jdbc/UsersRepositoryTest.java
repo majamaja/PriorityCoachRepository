@@ -2,6 +2,7 @@ package com.futuristlabs.p2p.repos.jdbc;
 
 import com.futuristlabs.p2p.func.auth.*;
 import com.futuristlabs.p2p.func.sync.UsersRepository;
+import com.futuristlabs.p2p.func.userprofile.ChangePasswordRequest;
 import com.futuristlabs.p2p.func.userprofile.UserProfile;
 import com.futuristlabs.p2p.repos.RepositoryTest;
 import org.junit.Test;
@@ -133,8 +134,39 @@ public class UsersRepositoryTest extends RepositoryTest {
     }
 
     @Test
-    public void changePassword() {
-        repo.updatePassword("test@example.com", "Secret");
+    public void setPassword_nonExistingUser() {
+        repo.setPassword("test@example.com", "Secret");
+    }
+
+    @Test
+    public void updatePassword_nonExistingUser() {
+        final ChangePasswordRequest request = new ChangePasswordRequest();
+        request.setUserId(UUID.randomUUID());
+        request.setOldPassword("Old Pass");
+        request.setNewPassword("New Pass");
+        repo.updatePassword(request);
+    }
+
+    @Test
+    public void updatePassword_existingUser() {
+        sampleData.enableLog();
+
+        final String email = UUID.randomUUID() + "@example.com";
+        final String oldPassword = "Secret";
+        final String newPassword = "NewSecret";
+        final UUID userId = sampleData.userWithCredentials(email, oldPassword);
+
+        repo.updatePassword(new ChangePasswordRequest(userId, oldPassword, newPassword));
+
+        final AuthenticationRequest authRequestOld = new AuthenticationRequest();
+        authRequestOld.setEmail(email);
+        authRequestOld.setPassword(oldPassword);
+        assertNull(repo.findUserByCredentials(authRequestOld));
+
+        final AuthenticationRequest authRequestNew = new AuthenticationRequest();
+        authRequestNew.setEmail(email);
+        authRequestNew.setPassword(newPassword);
+        assertNotNull(repo.findUserByCredentials(authRequestNew));
     }
 
     @Test
@@ -174,7 +206,6 @@ public class UsersRepositoryTest extends RepositoryTest {
 
         final UserProfile updatedProfile = repo.findProfileById(userId);
         assertEquals(updatedProfile, userProfile);
-
     }
 
 }

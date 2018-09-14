@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.UUID;
 
+import static com.futuristlabs.p2p.utils.Security.hash;
+
 @Repository
 public class SampleData {
 
@@ -25,15 +27,33 @@ public class SampleData {
     }
 
     public UUID nativeAuth(UUID id, String email) {
-        insert("INSERT INTO native_users (id, email, password) VALUES (:1, :2, :3)", id, email, UUID.randomUUID());
+        return nativeAuth(id, email, UUID.randomUUID().toString());
+    }
+
+    public UUID nativeAuth(UUID id, String email, String password) {
+        insert("INSERT INTO native_users (id, email, password) VALUES (:1, :2, :3)", id, email, hash(password));
         return id;
     }
 
     public UUID user() {
         final UUID userId = UUID.randomUUID();
         final String email = userId + "@example.com";
+        final String name = "Sample User";
+        final UUID nativeAuthId = nativeAuth(userId, email, "RandomPassword");
 
-        insert("INSERT INTO users (id, name, email, native_user_id) VALUES (:1, :2, :3, :4)", userId, "Sample User", email, nativeAuth(userId, email));
+        return userWithNative(userId, name, email, nativeAuthId);
+    }
+
+    public UUID userWithCredentials(final String email, final String password) {
+        final UUID userId = UUID.randomUUID();
+        final String name = "Sample User";
+        final UUID nativeAuthId = nativeAuth(userId, email, password);
+
+        return userWithNative(userId, name, email, nativeAuthId);
+    }
+
+    public UUID userWithNative(final UUID userId, final String name, final String email, final UUID nativeAuthId) {
+        insert("INSERT INTO users (id, name, email, native_user_id) VALUES (:1, :2, :3, :4)", userId, name, email, nativeAuthId);
         return userId;
     }
 
@@ -126,4 +146,5 @@ public class SampleData {
             System.out.println("SQL: " + sql + " ::: " + Arrays.asList(ids));
         }
     }
+
 }

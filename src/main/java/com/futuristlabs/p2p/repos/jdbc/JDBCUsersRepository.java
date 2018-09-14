@@ -39,7 +39,7 @@ public class JDBCUsersRepository extends JDBCRepository implements UsersReposito
             return null;
         }
 
-        final String sql = "SELECT id, email FROM native_users WHERE email = :email AND password=:password";
+        final String sql = "SELECT id, email FROM native_users WHERE email = :email AND password = :password";
 
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("email", authenticationRequest.getEmail());
@@ -157,7 +157,7 @@ public class JDBCUsersRepository extends JDBCRepository implements UsersReposito
     }
 
     @Override
-    public void updatePassword(String email, String newPassword) {
+    public void setPassword(String email, String newPassword) {
         if (email == null || newPassword == null) {
             return;
         }
@@ -173,10 +173,10 @@ public class JDBCUsersRepository extends JDBCRepository implements UsersReposito
 
     @Override
     public void updatePassword(ChangePasswordRequest request) {
-        final String sql = "UPDATE native_users SET password = :newPassword WHERE id = :userId AND password = oldPassword";
+        final String sql = "UPDATE native_users SET password = :newPassword WHERE id = :userId AND password = :oldPassword";
 
         final MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("userId", request.getUserId());
+        params.addValue("userId", request.getUserId().toString());
         params.addValue("oldPassword", hash(request.getOldPassword()));
         params.addValue("newPassword", hash(request.getNewPassword()));
 
