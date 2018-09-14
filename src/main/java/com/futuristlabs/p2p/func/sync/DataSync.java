@@ -4,7 +4,6 @@ import com.futuristlabs.p2p.func.buddy.UserFriend;
 import com.futuristlabs.p2p.func.buddy.UserFriendsRepository;
 import com.futuristlabs.p2p.func.happiness.UserHappinessRepository;
 import com.futuristlabs.p2p.func.lifeupgrade.ReferenceRepository;
-import com.futuristlabs.p2p.func.notes.UserNotesRepository;
 import com.futuristlabs.p2p.func.useractions.UserActionsRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +25,6 @@ public class DataSync {
 
     @Autowired
     private UserFriendsRepository userFriendsRepository;
-
-    @Autowired
-    private UserNotesRepository userNotesRepository;
 
     public ReferenceSyncData getReferenceData(DateTime modifiedSince) {
         final ReferenceSyncData referenceSyncData = new ReferenceSyncData();
@@ -53,13 +49,11 @@ public class DataSync {
             friend.setHappinessLevels(userHappinessRepository.modifiedHappinessLevel(friend.getFriendId(), modifiedSince));
         }
         userSyncData.updated.userFriendPermissions = userFriendsRepository.modifiedFriendsPermissions(userId, modifiedSince);
-        userSyncData.updated.userNotes = userNotesRepository.modifiedNotes(userId, modifiedSince);
 
         userSyncData.deleted.lifeUpgradeActions = referenceRepository.deletedUserLifeUpgradeActions(userId, modifiedSince);
         userSyncData.deleted.userActionsLogs = userActionsRepository.deletedActionsLogs(userId, modifiedSince);
         userSyncData.deleted.userFriends = userFriendsRepository.deletedFriends(userId, modifiedSince);
         userSyncData.deleted.userFriendPermissions = userFriendsRepository.deletedFriendsPermissions(userId, modifiedSince);
-        userSyncData.deleted.userNotes = userNotesRepository.deletedNotes(userId, modifiedSince);
 
         return userSyncData;
     }
@@ -70,12 +64,10 @@ public class DataSync {
         userHappinessRepository.modifyHappinessLevel(userId, userSyncData.updated.userHappinessLevels);
         userFriendsRepository.modifyFriends(userId, userSyncData.updated.userFriends);
         userFriendsRepository.modifyFriendsPermissions(userId, userSyncData.updated.userFriendPermissions);
-        userNotesRepository.modifyNotes(userId, userSyncData.updated.userNotes);
 
         referenceRepository.deleteUserLifeUpgradeActions(userId, userSyncData.deleted.lifeUpgradeActions);
         userActionsRepository.deleteActionsLogs(userId, userSyncData.deleted.userActionsLogs);
         userFriendsRepository.deleteFriends(userId, userSyncData.deleted.userFriends);
         userFriendsRepository.deleteFriendsPermissions(userId, userSyncData.deleted.userFriendPermissions);
-        userNotesRepository.deleteNotes(userId, userSyncData.deleted.userNotes);
     }
 }

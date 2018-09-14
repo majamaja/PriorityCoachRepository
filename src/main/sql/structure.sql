@@ -100,19 +100,6 @@ CREATE TABLE happiness_level_checkins (
 ) engine = InnoDB;
 
 
-CREATE TABLE user_notes (
-  id                        CHAR(36) PRIMARY KEY,
-  user_id                   CHAR(36) NOT NULL,
-  note_date                 TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  title                     VARCHAR(512) NOT NULL,
-  content                   TEXT NOT NULL,
-  last_modified             TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  is_deleted                BOOL NOT NULL DEFAULT false,
-
-  CONSTRAINT user_notes_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id)
-) engine = InnoDB;
-
-
 CREATE TABLE invitations (
   id                        CHAR(36) PRIMARY KEY,
   user_id                   CHAR(36) NOT NULL,
