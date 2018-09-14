@@ -21,13 +21,13 @@ public class ChatRepositoryTest extends RepositoryTest {
 
     @Test
     public void modifiedMessages() {
-        final List<ChatMessage> messages = repo.findAllByFriendshipAndUpdatedAfter(UUID.randomUUID(), new DateTime());
+        final List<ChatMessage> messages = repo.findAllByFriendshipAndUpdatedAfter(UUID.randomUUID(), UUID.randomUUID(), new DateTime());
         assertTrue(messages.isEmpty());
     }
 
     @Test
     public void modifiedMessagesNoSinceDate() {
-        final List<ChatMessage> messages = repo.findAllByFriendshipAndUpdatedAfter(UUID.randomUUID(), null);
+        final List<ChatMessage> messages = repo.findAllByFriendshipAndUpdatedAfter(UUID.randomUUID(), UUID.randomUUID(), null);
         assertTrue(messages.isEmpty());
     }
 
@@ -57,9 +57,9 @@ public class ChatRepositoryTest extends RepositoryTest {
         message.setSendAtDate(new DateTime());
         repo.save(message, fromUserId, friendshipId);
 
-        assertEquals(1, repo.findAllByFriendshipAndUpdatedAfter(friendshipId, null).size());
-        assertEquals(0, repo.findAllByFriendshipAndUpdatedAfter(friendshipId, new DateTime()).size());
-        assertEquals(1, repo.findAllByFriendshipAndUpdatedAfter(friendshipId, new DateTime().minusHours(1)).size());
+        assertEquals(1, repo.findAllByFriendshipAndUpdatedAfter(fromUserId, friendshipId, null).size());
+        assertEquals(0, repo.findAllByFriendshipAndUpdatedAfter(fromUserId, friendshipId, new DateTime()).size());
+        assertEquals(1, repo.findAllByFriendshipAndUpdatedAfter(fromUserId, friendshipId, new DateTime().minusHours(1)).size());
     }
 
     @Test

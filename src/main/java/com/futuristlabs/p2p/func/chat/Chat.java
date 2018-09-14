@@ -19,8 +19,8 @@ public class Chat {
         this.notificationProvider = notificationProvider;
     }
 
-    public List<ChatMessage> newMessages(UUID friendshipId, DateTime modifiedSince) {
-        return chatRepository.findAllByFriendshipAndUpdatedAfter(friendshipId, modifiedSince);
+    public List<ChatMessage> newMessages(UUID userId, UUID friendshipId, DateTime modifiedSince) {
+        return chatRepository.findAllByFriendshipAndUpdatedAfter(userId, friendshipId, modifiedSince);
     }
 
     public void postMessage(IncomingChatMessage message, UUID fromUserId, UUID forFriendshipId) {

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface ChatRepository {
 
-    List<ChatMessage> findAllByFriendshipAndUpdatedAfter(UUID friendshipId, DateTime modifiedSince);
+    List<ChatMessage> findAllByFriendshipAndUpdatedAfter(UUID userId, UUID friendshipId, DateTime modifiedSince);
     List<String> findAllDeviceTokensForUserFriend(UUID fromUserId, UUID friendshipId);
 
     void save(IncomingChatMessage message, UUID fromUserId, UUID forFriendshipId);
