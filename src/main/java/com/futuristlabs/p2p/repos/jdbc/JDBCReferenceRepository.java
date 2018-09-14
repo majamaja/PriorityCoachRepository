@@ -88,7 +88,7 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
     @Override
     public List<LifeUpgradeAction> modifiedUserLifeUpgradeActions(UUID userId, DateTime modifiedSince) {
         final String sql =
-                " SELECT id, name, life_upgrade_category_id, times_per_week " +
+                " SELECT id, user_id, name, life_upgrade_category_id, times_per_week " +
                 " FROM life_upgrade_actions " +
                 " WHERE user_id = :userId " +
                 " AND is_deleted = false " +
@@ -104,7 +104,7 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
     @Override
     public List<LifeUpgradeAction> modifiedUserLifeUpgradeActionsRestricted(UUID userId, DateTime modifiedSince, UUID friendId) {
         final String sql =
-                " SELECT id, name, life_upgrade_category_id, times_per_week " +
+                " SELECT id, user_id, name, life_upgrade_category_id, times_per_week " +
                 " FROM life_upgrade_actions " +
                 " WHERE user_id = :userId " +
                 " AND is_deleted = false " +
@@ -182,12 +182,14 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
         @Override
         public LifeUpgradeAction mapRow(ResultSet rs, int rowNum) throws SQLException {
             final UUID id = UUID.fromString(rs.getString("id"));
+            final UUID userId = UUID.fromString(rs.getString("user_id"));
             final String name = rs.getString("name");
             final UUID lifeUpgradeCategoryId = UUID.fromString(rs.getString("life_upgrade_category_id"));
             final int timePerWeek = rs.getInt("times_per_week");
 
             final LifeUpgradeAction lifeUpgradeAction = new LifeUpgradeAction();
             lifeUpgradeAction.setId(id);
+            lifeUpgradeAction.setUserId(userId);
             lifeUpgradeAction.setName(name);
             lifeUpgradeAction.setLifeUpgradeCategoryId(lifeUpgradeCategoryId);
             lifeUpgradeAction.setTimesPerWeek(timePerWeek);
