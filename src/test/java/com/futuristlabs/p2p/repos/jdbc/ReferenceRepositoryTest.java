@@ -147,6 +147,30 @@ public class ReferenceRepositoryTest extends RepositoryTest {
     }
 
     @Test
+    public void modifyUserLifeUpgradeActions_CreateAnItem() {
+        final UUID categoryA = sampleData.lifeUpgradeCategory();
+        final UUID categoryB = sampleData.lifeUpgradeCategory();
+        final UUID user = sampleData.user();
+        final UUID lifeUpgradeActionId = sampleData.lifeUpgradeAction(user, categoryA);
+        final String newName = "New Name ....";
+        final int newTimesPerWeek = 103;
+
+        final LifeUpgradeAction lifeUpgradeAction = new LifeUpgradeAction();
+        lifeUpgradeAction.setId(lifeUpgradeActionId);
+        lifeUpgradeAction.setName(newName);
+        lifeUpgradeAction.setTimesPerWeek(newTimesPerWeek);
+        lifeUpgradeAction.setLifeUpgradeCategoryId(categoryB);
+        lifeUpgradeAction.setUserId(user);
+
+        repo.modifyUserLifeUpgradeActions(user, Arrays.asList(lifeUpgradeAction));
+        final LifeUpgradeAction newLifeUpgradeAction = repo.modifiedUserLifeUpgradeActions(user, null).get(0);
+
+        assertEquals(newName, newLifeUpgradeAction.getName());
+        assertEquals(newTimesPerWeek, newLifeUpgradeAction.getTimesPerWeek());
+        assertEquals(categoryB, newLifeUpgradeAction.getLifeUpgradeCategoryId());
+    }
+
+    @Test
     public void deleteUserLifeUpgradeActions() {
         repo.deleteUserLifeUpgradeActions(UUID.randomUUID(), Arrays.asList(UUID.randomUUID(), UUID.randomUUID()));
     }

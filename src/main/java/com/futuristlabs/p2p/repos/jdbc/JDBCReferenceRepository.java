@@ -144,7 +144,7 @@ public class JDBCReferenceRepository extends JDBCRepository implements Reference
         final String sql =
                 " INSERT INTO life_upgrade_actions (id, user_id, life_upgrade_category_id, name, times_per_week) " +
                 " VALUES (:id, :userId, :lifeUpgradeCategoryId, :name, :timesPerWeek) " +
-                " ON DUPLICATE KEY UPDATE name = :name ";
+                " ON DUPLICATE KEY UPDATE name = :name, times_per_week = :timesPerWeek, life_upgrade_category_id = :lifeUpgradeCategoryId";
 
         for (LifeUpgradeAction lifeUpgradeAction : lifeUpgradeActions) {
             final MapSqlParameterSource params = new MapSqlParameterSource();
