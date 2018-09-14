@@ -19,11 +19,17 @@ public class JDBCUserFriendsRepository extends JDBCRepository implements UserFri
     @Override
     public List<UserFriend> findAllFriends(final UUID userId) {
         final String sql =
-                " SELECT uf.id, uf.user_id, uf.friend_id, u.name as friend_name, uf.friend_email, uf.friend_phone " +
+                " SELECT uf.id, uf.user_id as user_id, uf.friend_id as friend_id, u.name as friend_name, COALESCE(u.email, uf.friend_email) as friend_email, COALESCE(u.phone, uf.friend_phone) as friend_phone " +
                 " FROM user_friends uf " +
                 " LEFT JOIN users u ON uf.friend_id = u.id " +
                 " WHERE uf.is_deleted = false " +
-                " AND (uf.user_id = :userId OR uf.friend_id = :userId) ";
+                " AND uf.user_id = :userId " +
+                " UNION ALL " +
+                " SELECT uf.id, uf.friend_id as user_id, uf.user_id as friend_id, u.name as friend_name, COALESCE(u.email, uf.friend_email) as friend_email, COALESCE(u.phone, uf.friend_phone) as friend_phone " +
+                " FROM user_friends uf " +
+                " LEFT JOIN users u ON uf.user_id = u.id " +
+                " WHERE uf.is_deleted = false " +
+                " AND uf.friend_id = :userId ";
 
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("userId", userId.toString());
