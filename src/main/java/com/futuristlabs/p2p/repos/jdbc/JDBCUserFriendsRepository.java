@@ -34,9 +34,12 @@ public class JDBCUserFriendsRepository extends JDBCRepository implements UserFri
     @Override
     public List<UserFriendPermission> modifiedFriendsPermissions(UUID userId, DateTime modifiedSince) {
         final String sql =
-                " SELECT id, user_id, friendship_id, life_upgrade_action_id, visible " +
-                " FROM user_friend_permissions " +
-                " WHERE (:modifiedSince IS NULL OR last_modified > :modifiedSince) ";
+                " SELECT ufp.id, ufp.user_id, ufp.friendship_id, ufp.life_upgrade_action_id, ufp.visible " +
+                " FROM user_friend_permissions ufp " +
+                " JOIN user_friends uf ON ufp.friendship_id = uf.id " +
+                " WHERE (:modifiedSince IS NULL OR ufp.last_modified > :modifiedSince) " +
+                " AND (uf.user_id = :userId OR uf.friend_id = :userId) " +
+                " AND uf.is_deleted = false ";
 
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("modifiedSince", modifiedSince != null ? modifiedSince.toDate() : null);
@@ -118,8 +121,8 @@ public class JDBCUserFriendsRepository extends JDBCRepository implements UserFri
     }
 
     @Override
-    public void deleteFriends(UUID userId, List<UUID> userFriends) {
-        if (userFriends == null || userFriends.isEmpty()) {
+    public void deleteFriends(UUID userId, List<UUID> userFriendships) {
+        if (userFriendships == null || userFriendships.isEmpty()) {
             return;
         }
 
@@ -127,9 +130,13 @@ public class JDBCUserFriendsRepository extends JDBCRepository implements UserFri
 
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("userId", userId.toString());
-        params.addValue("ids", toStringList(userFriends));
+        params.addValue("ids", toStringList(userFriendships));
 
         db.update(sql, params);
+
+        for (UUID userFriendshipId : userFriendships) {
+            deleteFriendsPermissionsByFriedship(userId, userFriendshipId);
+        }
     }
 
     @Override
@@ -143,6 +150,16 @@ public class JDBCUserFriendsRepository extends JDBCRepository implements UserFri
         final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("userId", userId.toString());
         params.addValue("ids", toStringList(userFriendPermissions));
+
+        db.update(sql, params);
+    }
+
+    private void deleteFriendsPermissionsByFriedship(UUID userId, UUID friendshipId) {
+        final String sql = "UPDATE user_friend_permissions SET visible = false WHERE user_id = :userId AND friendship_id = :friendshipId ";
+
+        final MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("userId", userId.toString());
+        params.addValue("friendshipId", friendshipId.toString());
 
         db.update(sql, params);
     }
