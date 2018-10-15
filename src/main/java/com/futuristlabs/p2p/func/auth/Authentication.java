@@ -44,6 +44,11 @@ public class Authentication {
         final SessionUser user = usersRepository.createWithNative(authenticationRequest);
         usersRepository.registerUserDevice(user.getId(), authenticationRequest.getDevice());
 
+        // Generate session
+        final org.springframework.security.core.Authentication auth = authenticationManager.authenticate(new SpringUser(user));
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(auth);
+
         return user;
     }
 

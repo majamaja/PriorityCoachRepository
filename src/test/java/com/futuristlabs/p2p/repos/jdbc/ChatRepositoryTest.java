@@ -59,7 +59,9 @@ public class ChatRepositoryTest extends RepositoryTest {
 
         assertEquals(1, repo.findAllByFriendshipAndUpdatedAfter(fromUserId, friendshipId, null).size());
         assertEquals(0, repo.findAllByFriendshipAndUpdatedAfter(fromUserId, friendshipId, new DateTime()).size());
-        assertEquals(1, repo.findAllByFriendshipAndUpdatedAfter(fromUserId, friendshipId, new DateTime().minusHours(1)).size());
+
+        //HMITKOV : add 180 minutes (3 hours) to handle time difference between local host and remote database.
+        assertEquals(1, repo.findAllByFriendshipAndUpdatedAfter(fromUserId, friendshipId, new DateTime().minusHours(181)).size());
     }
 
     @Test

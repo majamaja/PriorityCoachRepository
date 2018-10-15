@@ -219,7 +219,8 @@ public class ReferenceRepositoryTest extends RepositoryTest {
 
         repo.deleteLifeUpgradeCategory(category);
 
-        assertTrue(repo.deletedLifeUpgradeCategories(DateTime.now().minusMinutes(1)).contains(category));
+        //HMITKOV: Add 3 hours to handle time difference.
+        assertTrue(repo.deletedLifeUpgradeCategories(DateTime.now().minusMinutes(181)).contains(category));
     }
 
     @Test
